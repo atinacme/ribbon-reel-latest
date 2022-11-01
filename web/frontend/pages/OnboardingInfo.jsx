@@ -50,30 +50,40 @@ export default function OnboardingInfo() {
         [],
     );
     return (
+        <div className='onboard-wrap'>
         <Page narrowWidth>
+            <div className='onboard-items'>
             <TitleBar title="Onboarding Info" />
             <Stack fill>
-                <Stack.Item><Thumbnail size="small" alt="logo" source={Mark} />ribbonreel</Stack.Item>
-                <div style={{ display: 'flex' }}>
+                <Stack.Item><div style={{display: 'flex', alignItems: 'center'}}><Thumbnail size="small" alt="logo" source={Mark} /><h2>ribbonreel</h2></div></Stack.Item>
+                <div className='onboard-progressbar'>
                     <TextContainer>
-                        <div>
-                            <p>1</p>
+                        <div className='progress-wrap'>
+                            <span>1</span>
                             <div className="progress">
                                 <div className="progress-bar" role="progressbar" style={{ width: '100%' }} aria-valuenow="100" aria-valuemin="0" aria-valuemax="100"></div>
                             </div>
                         </div>
-                        <p>2</p>
+                        <div className='progress-wrap'>
+                        <span>2</span>
                         <div className="progress">
                             <div className="progress-bar" role="progressbar" style={{ width: '100%' }} aria-valuenow="100" aria-valuemin="0" aria-valuemax="100"></div>
                         </div>
-                        <p>3</p>
+                        </div>
+                        <div className='progress-wrap'>
+                        <span>3</span>
+                        </div>
+                        
                     </TextContainer>
                 </div>
             </Stack>
+            </div>
             <Layout>
                 <Layout.Section>
+                    <div className='info-wrapper'>
                     <Card title="Your Info" sectioned>
                         <p>Manage your contact details.</p>
+                        <div  className="textfeild-wrap">
                         <TextField label="Store name" value="Vandelay Industries" disabled autoComplete="off" />
                         <TextField
                             label="Email"
@@ -82,14 +92,17 @@ export default function OnboardingInfo() {
                             helpText="We’ll use this address if we need to contact you about your account."
                             autoComplete="email"
                         />
+                        </div>
                     </Card>
+                    </div>
                 </Layout.Section>
             </Layout>
             <Layout>
                 <Layout.Section>
+                    <div className='subscription-wrapper'>
                     <Card title="Subcription Plan" sectioned>
                         <p>Manage your billing and payment plan.</p>
-                        <div style={{ display: 'flex' }}>
+                        <div style={{ display: 'flex' , paddingTop: '24px'}} className="Subcription-card">
                             <Card sectioned>
                                 <Stack>
                                     <Stack.Item>
@@ -100,14 +113,17 @@ export default function OnboardingInfo() {
                                     </Stack.Item>
                                 </Stack>
                                 <p>Our most popular plan for small shops.</p>
-                                <Stack>
+                               <div className='Subcription-month_wrap'>
+                                 <Stack>
                                     <Stack.Item>
-                                        <Heading>$10</Heading>
+                                        <span>$10</span>
                                     </Stack.Item>
                                     <Stack.Item>
-                                        per month
+                                       <span className='month-detail'>per month</span> 
                                     </Stack.Item>
+                                    
                                 </Stack>
+                                </div>
                                 <Stack>
                                     <List type="bullet">
                                         <List.Item>### Amount of gifts</List.Item>
@@ -129,10 +145,10 @@ export default function OnboardingInfo() {
                                 <p>Our most popular plan for small shops.</p>
                                 <Stack>
                                     <Stack.Item>
-                                        <Heading>$20</Heading>
+                                        <span>$20</span>
                                     </Stack.Item>
                                     <Stack.Item>
-                                        per month
+                                    <span className='month-detail'>per month</span> 
                                     </Stack.Item>
                                 </Stack>
                                 <Stack>
@@ -156,10 +172,10 @@ export default function OnboardingInfo() {
                                 <p>Our most popular plan for small shops.</p>
                                 <Stack>
                                     <Stack.Item>
-                                        <Heading>$30</Heading>
+                                        <span>$30</span>
                                     </Stack.Item>
                                     <Stack.Item>
-                                        per month
+                                    <span className='month-detail'>per month</span> 
                                     </Stack.Item>
                                 </Stack>
                                 <Stack>
@@ -173,15 +189,17 @@ export default function OnboardingInfo() {
                             </Card>
                         </div>
                     </Card>
+                    </div>
                 </Layout.Section>
                 <TextContainer>Subscription will be monthly and payment method can be managed thru you <Link>shopify account</Link></TextContainer>
             </Layout>
             <Layout>
                 <Layout.Section>
+                    <div className='compact-layout_wrap'>
                     <Card title="Style" sectioned>
                         <p>Manage the design RibbonReel in your Cart.</p>
-                        <Heading>Select Your Layout</Heading>
-                        <div style={{ display: 'flex' }}>
+                        <h3>Select Your Layout</h3>
+                        <div style={{ display: 'flex' , paddingTop: '24px'}} className='compact-layout_card'>
                             <Card sectioned>
                                 <DropZone onDrop={handleDropZoneDrop}>
                                     {uploadedFiles}
@@ -227,37 +245,40 @@ export default function OnboardingInfo() {
                             </Card>
                         </div>
                     </Card>
+                    </div>
                 </Layout.Section>
             </Layout>
+            <div className='copyright'>
             <Stack>
                 <Stack.Item>
-                    © 2022 RibbonReel. All rights reserved.
-                </Stack.Item>
-                <Stack.Item>
-                    Privacy Policy
+                    © 2022 RibbonReel. All rights reserved. <span>Privacy Policy</span>
                 </Stack.Item>
                 <Stack.Item>
                     <ButtonGroup>
                         <Button>Back</Button>
-                        <Button primary>Next</Button>
+                     <div className="next-cta">   <Button >Next</Button> </div>
                     </ButtonGroup>
                 </Stack.Item>
             </Stack>
+            </div>
             <Layout>
                 <Layout.Section>
+                    <div className='congrats-wrap'>
                     <Card sectioned>
                         <div style={{ display: 'block', alignItems: 'center' }}>
                             {/* <Stack fill> */}
                             <Stack.Item><Thumbnail size="small" alt="logo" source={Vector1} /></Stack.Item>
-                            <Stack.Item>Congratulations you finished setting up RibbonReel!</Stack.Item>
-                            <Stack.Item>Your customers can now gift thier firends and family with Reels.</Stack.Item>
+                            <h3>Congratulations you finished setting up RibbonReel!</h3>
+                            <h4>Your customers can now gift thier firends and family with Reels.</h4>
                             <Stack.Item><Button>Continue to Site</Button></Stack.Item>
                             <Stack.Item><Thumbnail size="small" alt="logo" source={Mark} />ribbonreel</Stack.Item>
                             {/* </Stack> */}
                         </div>
                     </Card>
+                    </div>
                 </Layout.Section>
             </Layout>
         </Page>
+        </div>
     )
 }
