@@ -1,7 +1,7 @@
 import { BrowserRouter } from "react-router-dom";
 import { NavigationMenu } from "@shopify/app-bridge-react";
 import Routes from "./Routes";
-
+import './App.css';
 import {
   AppBridgeProvider,
   QueryProvider,
@@ -21,13 +21,13 @@ export default function App() {
             <NavigationMenu
               navigationLinks={[
                 {
-                  label: "Page name",
-                  destination: "/pagename",
-                },
-                {
                   label: "Onboarding Info",
                   destination: "/OnboardingInfo",
                 },
+                {
+                  label: "Merchant Dashboard",
+                  destination: "/MerchantDashboard",
+                }
               ]}
             />
             <Routes pages={pages} />
