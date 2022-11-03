@@ -221,6 +221,10 @@ h2 {
     border-bottom: 1px solid #333;
 }
 
+.compact-dropzone {
+    background: #FBFBFB;
+    border: 1px solid #333;
+}
 
 
 .compact-layout_card .Polaris-DropZone-FileUpload--large {
@@ -377,6 +381,104 @@ span.month-detail {
 
 .onboard-items {
     padding: 20px 0;
+}
+
+.compact-layout_wrap .Polaris-DropZone--hasOutline:not(.Polaris-DropZone--focused)::after {
+    border: none;
+}
+
+.compact-layout_card .Polaris-Card {
+    background-color: unset;
+    box-shadow: unset;
+}
+
+.merchant-header {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    justify-content: space-between;
+}
+
+.merchant-header .Polaris-Stack__Item {
+    display: flex;
+    align-items: center;
+}
+
+.merchant-header span.Polaris-Button__Text {
+    display: flex;
+    align-items: center;
+}
+
+.merchant-header h2 {
+    padding-left: 15px;
+}
+
+.merchant-header .Polaris-Stack__Item:nth-child(2) .Polaris-Thumbnail {
+    border: none;
+}
+
+.merchant-card {
+    display: flex;
+    justify-content: space-between;
+    padding: 30px 0;
+    width: 100%;
+}
+
+.merchant-card .Polaris-Card.active {
+    background-color: #4F0ACC;
+}
+
+.merchant-card .Polaris-Card {
+    width: 25%;
+    margin: 10px;
+}
+
+.merchant-graph_wrapper .Polaris-Card {
+    width: 49%;
+}
+
+.merchant-card h4 {
+    font-weight: 400;
+    font-size: 36px;
+    padding: 24px 0;
+}
+
+.merchant-card .Polaris-Stack__Item,
+.merchant-graph_wrapper,
+.merachant-range,
+.recent-order {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.support-wrapper button.Polaris-Button .Polaris-Thumbnail {
+    border: none;
+    box-shadow: unset;
+}
+
+.support-wrapper span.Polaris-Button__Text {
+    display: flex;
+    align-items: center;
+}
+
+.merchant-graph_wrapper span.price {
+    font-weight: 500;
+    font-size: 30px;
+}
+
+.merchant-card h4 {
+    font-weight: 400;
+    font-size: 36px;
+    padding: 24px 0;
+}
+
+.merchant-card .Polaris-Thumbnail {
+    margin-right: 10px;
+}
+
+.merchant-card .Polaris-TextContainer {
+    padding: 0 10px;
 }
 
 @media (max-width: 1024px) {

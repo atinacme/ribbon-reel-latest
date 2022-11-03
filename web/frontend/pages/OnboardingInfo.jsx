@@ -243,11 +243,13 @@ export default function OnboardingInfo() {
                                                     <strong>Recommended</strong>
                                                 </Card>
                                                 <Card sectioned>
-                                                    <div className='compact-dropzone'>  <DropZone onDrop={handleDropZoneDrop}>
-                                                        {uploadedFiles}
-                                                        {fileUpload}
-                                                    </DropZone>
+                                                    <div className='compact-dropzone'>
+                                                        <DropZone onDrop={handleDropZoneDrop}>
+                                                            {uploadedFiles}
+                                                            {fileUpload}
+                                                        </DropZone>
                                                     </div>
+
                                                     <RadioButton
                                                         label="Expanded Layout"
                                                         helpText="Draw attention to gifting option"
@@ -283,13 +285,11 @@ export default function OnboardingInfo() {
                                     <div className='congrats-wrap'>
                                         <Card sectioned>
                                             <div style={{ display: 'block', alignItems: 'center' }}>
-                                                {/* <Stack fill> */}
                                                 <Stack.Item><Thumbnail size="small" alt="logo" source={Vector1} /></Stack.Item>
                                                 <h3>Congratulations you finished setting up RibbonReel!</h3>
                                                 <h4>Your customers can now gift thier firends and family with Reels.</h4>
                                                 <Stack.Item><Button>Continue to Site</Button></Stack.Item>
                                                 <Stack.Item><Thumbnail size="small" alt="logo" source={Mark} />ribbonreel</Stack.Item>
-                                                {/* </Stack> */}
                                             </div>
                                         </Card>
                                     </div>
