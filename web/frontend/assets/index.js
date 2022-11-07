@@ -8,3 +8,4 @@ export { default as RevenueArrow } from "./revenue-arrow.png";
 export { default as Imageshoe } from "./Imageshoe.png";
 export { default as RibbonReel_BrandElements } from "./RibbonReel_BrandElements.png";
 export { default as chat } from "./chat.png";
+export { default as arrow } from "./arrow.png";

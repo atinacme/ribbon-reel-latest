@@ -5,7 +5,7 @@ import {
 } from "@shopify/polaris";
 import { ChatMajor } from '@shopify/polaris-icons';
 import { TitleBar, useNavigate } from "@shopify/app-bridge-react";
-import { Mark, chat, MerchantDashboard, RibbonReel_BrandElements, RevenueArrow, Imageshoe } from "../assets";
+import { Mark, chat, MerchantDashboard, RibbonReel_BrandElements, Imageshoe, arrow } from "../assets";
 import Chart from 'chart.js/auto';
 import { Bar } from 'react-chartjs-2';
 
@@ -52,7 +52,7 @@ export default function MerchantDashboardPage() {
                     <Layout.Section>
                         <div className='merchant-header header'>
                             <Stack.Item><Thumbnail size="small" alt="logo" source={Mark} /><h2>ribbonreel</h2></Stack.Item>
-                            <Stack.Item><Button><Thumbnail size="small" alt="chat" source={chat} />Contact Support</Button></Stack.Item>
+                            <Stack.Item><Button><Thumbnail size="small" alt="chat" source={chat} /><span className='header-title'> Contact Support</span></Button></Stack.Item>
                         </div>
                     </Layout.Section>
                 </Layout>
@@ -68,7 +68,7 @@ export default function MerchantDashboardPage() {
                                         <h2>Total Gift Revenue</h2>
                                         <h4>$9,475.31</h4>
                                         <Stack.Item>
-                                            <Thumbnail size="small" alt="logo" source={RevenueArrow} />3%
+                                            <div className='arrow-wrap'> <img src={arrow} />3%</div>
                                             <TextContainer>+$39.8 this week</TextContainer>
                                         </Stack.Item>
                                     </div>
@@ -79,7 +79,7 @@ export default function MerchantDashboardPage() {
                                         <h2>Total Gifting Customers</h2>
                                         <h4>345</h4>
                                         <Stack.Item>
-                                            <Thumbnail size="small" alt="logo" source={RevenueArrow} />3%
+                                            <div className='arrow-wrap'> <img src={arrow} />3%</div>
                                             <TextContainer>+$39.8 this week</TextContainer>
                                         </Stack.Item>
                                     </div>
@@ -89,7 +89,7 @@ export default function MerchantDashboardPage() {
                                         <h2>Total Reel Orders</h2>
                                         <h4>3,169</h4>
                                         <Stack.Item>
-                                            <Thumbnail size="small" alt="logo" source={RevenueArrow} />3%
+                                            <div className='arrow-wrap'> <img src={arrow} />3%</div>
                                             <TextContainer>+$39.8 this week</TextContainer>
                                         </Stack.Item>
                                     </div>
@@ -99,7 +99,7 @@ export default function MerchantDashboardPage() {
                                         <h2>Most Gifted Product</h2>
                                         <div style={{ display: 'flex', alignItems: 'center' }}>  <Thumbnail size="small" alt="logo" source={Imageshoe} /><h4>$9,475.31</h4></div>
                                         <Stack.Item>
-                                            <Thumbnail size="small" alt="logo" source={RevenueArrow} />3%
+                                            <div className='arrow-wrap'> <img src={arrow} />3%</div>
                                             <TextContainer>+$39.8 this week</TextContainer>
                                         </Stack.Item>
                                     </div>
@@ -210,15 +210,16 @@ export default function MerchantDashboardPage() {
                                 <div style={{ display: 'block', alignItems: 'center' }}>
                                     <h3>Need Support?</h3>
                                     <p>Get our gifting experts to help with any issues you may be facing!</p>
-                                    <Button><Thumbnail size="small" alt="chat" source={ChatMajor} />Contact Support</Button>
-                                    <Button>Read FAQ</Button>
+                                    <div className='merchant-cta-wrap'>
+                                        <Button><Thumbnail size="small" alt="chat" source={ChatMajor} />Contact Support</Button>
+                                        <Button>Read FAQ</Button></div>
                                     <Thumbnail size="small" alt="chat" source={RibbonReel_BrandElements} />
                                 </div>
                             </Card>
                         </div>
                     </Layout.Section>
                 </Layout>
-                <div className=''>
+                <div className='merchant-footer_wrap'>
                     <Stack>
                         <Stack.Item><Thumbnail size="small" alt="logo" source={Mark} /><h2>ribbonreel</h2></Stack.Item>
                         <Stack.Item>

@@ -430,7 +430,7 @@ span.month-detail {
 
 .merchant-card .Polaris-Card {
     width: 25%;
-    margin: 10px;
+    margin: 5px;
 }
 
 .merchant-graph_wrapper .Polaris-Card {
@@ -443,7 +443,7 @@ span.month-detail {
     padding: 24px 0;
 }
 
-.merchant-card .Polaris-Stack__Item,
+
 .merchant-graph_wrapper,
 .merachant-range,
 .recent-order {
@@ -479,6 +479,145 @@ span.month-detail {
 
 .merchant-card .Polaris-TextContainer {
     padding: 0 10px;
+    font-size: 14px;
+    font-weight: 500;
+    color: #000000;
+}
+
+.merachnt-wrapper p {
+    font-size: 16px;
+    color: #202223;
+    font-weight: 400;
+}
+
+.merachnt-wrapper h2 {
+    font-size: 30px !important;
+    padding: 10px 0;
+}
+
+.merachnt-wrapper {
+    padding-top: 20px;
+}
+
+.merachnt-wrapper h3 {
+    font-size: 20px;
+    color: #202223;
+}
+
+.merchant-header span.Polaris-Button__Text {
+    display: flex;
+    align-items: center;
+    font-size: 15px;
+    font-weight: 500;
+    color: #202223;
+}
+
+.merchant-card h2 {
+    font-size: 20px !important;
+}
+
+.support-wrapper h3 {
+    font-size: 16px;
+    color: #202223;
+    font-weight: 600;
+    padding-bottom: 20px;
+}
+
+.support-wrapper .Polaris-Button button {
+    padding: 0 10px 0 0;
+}
+
+.support-wrapper .Polaris-Thumbnail::after {
+    padding-bottom: 40%;
+}
+
+.support-wrapper button {
+    margin-right: 20px;
+}
+
+.merchant-graph_wrapper .Polaris-Card+.Polaris-Card {
+    margin-top: 0;
+}
+
+.merchant-graph_wrapper {
+    padding-bottom: 20px;
+}
+
+.support-wrapper {
+    padding-top: 20px;
+}
+
+.merchant-footer_wrap .Polaris-Stack__Item {
+    display: flex;
+    align-items: center;
+}
+
+.merchant-footer_wrap .Polaris-Stack {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.merchant-footer_wrap .Polaris-Thumbnail {
+    margin-right: 10px;
+}
+
+.merchant-footer_wrap {
+    padding-top: 20px;
+}
+
+.merchant-footer_wrap span {
+    padding-left: 20px;
+}
+
+.merchant-card .Polaris-Thumbnail {
+    margin-right: 10px;
+    background: unset;
+    border: none;
+}
+
+.merchant-card .Polaris-Stack__Item {
+    display: flex;
+    align-items: center;
+}
+
+.arrow-wrap {
+    display: flex;
+    align-items: center;
+    font: 14px;
+    font-weight: 500;
+    color: #8D1BD8;
+}
+
+.arrow-wrap img {
+    margin-right: 5px;
+}
+
+.merchant-card .Polaris-Card.active {
+    background-color: #4F0ACC;
+}
+
+.merchant-card .Polaris-Card.active h2,
+.merchant-card .Polaris-Card.active h4,
+.merchant-card .Polaris-Card.active .Polaris-TextContainer,
+.Polaris-Card.active .arrow-wrap {
+    color: #fff;
+}
+
+.recent-order h3 {
+    font-size: 20px;
+    font-weight: 600;
+}
+
+.Polaris-DataTable__Table th {
+    font-weight: 500;
+    color: #202223;
+}
+
+.merchant-cta-wrap {
+    display: flex;
+    align-items: center;
+    padding-top: 20px;
 }
 
 @media (max-width: 1024px) {
@@ -494,6 +633,49 @@ span.month-detail {
 
     .left-ribon-reels_plan {
         margin-right: 0;
+    }
+}
+
+@media (max-width: 769px) {
+    .merchant-card .Polaris-Card {
+        width: 45%;
+        margin: 10px 0;
+    }
+
+    .merchant-card,
+    .merchant-graph_wrapper {
+        flex-wrap: wrap;
+    }
+
+    .merchant-card h4 {
+        font-size: 26px;
+    }
+
+    .merchant-card .Polaris-Stack__Item {
+        align-items: start;
+        flex-direction: column;
+    }
+
+    .merchant-card .Polaris-TextContainer {
+        padding: 0;
+    }
+
+    .merchant-graph_wrapper .Polaris-Card {
+        width: 100%;
+    }
+
+    .merchant-footer_wrap span {
+        padding-left: 0;
+    }
+
+    .header-title {
+        display: none;
+    }
+
+    .merchant-header .Polaris-Button {
+        width: 68px;
+        border-radius: 50%;
+        height: 68px;
     }
 }
 
