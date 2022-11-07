@@ -7,14 +7,10 @@ import {
   Link,
   Heading,
   Button,
-  Thumbnail,
   Stack
 } from "@shopify/polaris";
 import { TitleBar, useNavigate } from "@shopify/app-bridge-react";
 import '../node_modules/bootstrap/dist/css/bootstrap.min.css';
-import { trophyImage } from "../assets";
-
-import { ProductsCard } from "../components";
 
 export default function HomePage() {
   const navigate = useNavigate();
