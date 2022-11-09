@@ -27,6 +27,14 @@ export default function App() {
                 {
                   label: "Merchant Dashboard",
                   destination: "/MerchantDashboard",
+                },
+                {
+                  label: "Reel Orders",
+                  destination: "/ReelOrders",
+                },
+                {
+                  label: "Support",
+                  destination: "/Support",
                 }
               ]}
             />

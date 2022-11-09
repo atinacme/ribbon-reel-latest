@@ -9,3 +9,5 @@ export { default as Imageshoe } from "./Imageshoe.png";
 export { default as RibbonReel_BrandElements } from "./RibbonReel_BrandElements.png";
 export { default as chat } from "./chat.png";
 export { default as arrow } from "./arrow.png";
+export { default as Ellipse } from "./Ellipse.png";
+export { default as Trigger } from "./Trigger.png";
