@@ -7,6 +7,7 @@ import {
   QueryProvider,
   PolarisProvider,
 } from "./components";
+import './node_modules/bootstrap/dist/css/bootstrap.min.css';
 
 export default function App() {
   // Any .tsx or .jsx files in /pages will become a route
@@ -21,16 +22,16 @@ export default function App() {
             <NavigationMenu
               navigationLinks={[
                 {
-                  label: "Onboarding Info",
-                  destination: "/OnboardingInfo",
-                },
-                {
-                  label: "Merchant Dashboard",
-                  destination: "/MerchantDashboard",
+                  label: "Overview",
+                  destination: "/Overview",
                 },
                 {
                   label: "Reel Orders",
                   destination: "/ReelOrders",
+                },
+                {
+                  label: "Settings",
+                  destination: "/Settings",
                 },
                 {
                   label: "Support",

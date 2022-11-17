@@ -532,19 +532,8 @@ span.month-detail {
 }
 
 .support-wrapper button {
+    margin-top: 20px;
     margin-right: 20px;
-}
-
-.merchant-graph_wrapper .Polaris-Card+.Polaris-Card {
-    margin-top: 0;
-}
-
-.merchant-graph_wrapper {
-    padding-bottom: 20px;
-}
-
-.support-wrapper {
-    padding-top: 20px;
 }
 
 .merchant-footer_wrap .Polaris-Stack__Item {
@@ -614,10 +603,124 @@ span.month-detail {
     color: #202223;
 }
 
-.merchant-cta-wrap {
+.reels-order_body {
     display: flex;
     align-items: center;
-    padding-top: 20px;
+    justify-content: space-between;
+    padding: 20px 0;
+}
+
+.order-wrapper {
+    padding: 30px 20px;
+}
+
+.order-wrapper h2 {
+    font-size: 20px;
+    font-weight: 700;
+    color: #202223;
+}
+
+.order-wrapper span.Polaris-Button__Text {
+    display: flex;
+    align-items: center;
+}
+
+.order-serach_wrap {
+    width: 40%;
+}
+
+.order-wrapper thead th {
+    font-size: 14px;
+    font-weight: 500;
+    color: #202223;
+}
+
+.order-wrapper thead tr td:first-child {
+    font-size: 14px;
+    font-weight: 500;
+    color: #202223;
+}
+
+.order-cta-wrap {
+    display: flex;
+    align-items: center;
+}
+
+.wrapper {
+    padding: 30px 20px;
+}
+
+.support-card .Polaris-Stack {
+    margin-bottom: 0;
+}
+
+.support-card .Polaris-Card {
+    margin: 20px 0;
+}
+
+.support-wrap label {
+    font-size: 14px;
+    color: #202223;
+    font-weight: 400;
+}
+
+.support-card .Polaris-Stack__Item,
+.support-card .Polaris-Card__Section {
+    margin-top: 0;
+}
+
+.support-wrap button {
+    width: 100%;
+}
+
+.support-wrap button .Polaris-Button__Content {
+    justify-content: space-between;
+}
+
+.support-submit_wrap {
+    text-align: right;
+}
+
+.support-submit_wrap button {
+    width: auto;
+    background-color: #4F0ACC;
+    color: #fff;
+}
+
+.chat-para p {
+    font-size: 14px;
+    color: #3047EC;
+    font-weight: 500;
+    padding: 20px 0;
+}
+
+.chat-para .Polaris-Thumbnail {
+    margin-left: auto;
+}
+
+.wrapper.support-wrap {
+    max-width: 700px;
+    margin: 0 auto;
+}
+
+.support-card svg {
+    fill: #5C5F62;
+}
+
+.support-submit_wrap .Polaris-Button:hover {
+    background-color: #000;
+}
+
+.chat-para {
+    text-align: right;
+}
+
+.riben-content_img svg {
+    fill: #fff;
+}
+
+.riben-content_img svg path {
+    fill: #fff;
 }
 
 @media (max-width: 1024px) {
@@ -634,11 +737,70 @@ span.month-detail {
     .left-ribon-reels_plan {
         margin-right: 0;
     }
+
+    .order-wrapper h2 {
+        font-size: 20px;
+        font-weight: 700;
+        color: #202223;
+        /* padding-bottom: 20px; */
+    }
+
+    .order-cta-wrap {
+        display: flex;
+        align-items: center;
+        order: 1;
+        width: 100%;
+        padding-bottom: 20px;
+    }
+
+    .pagination-wrap {
+        order: 3;
+    }
+
+    .reels-order_body {
+        flex-wrap: wrap;
+    }
+
+    .order-serach_wrap {
+        width: 40%;
+        order: 2;
+    }
 }
 
 @media (max-width: 769px) {
+    .order-serach_wrap {
+        width: 70%;
+    }
+
+    .wrapper.support-wrap {
+        max-width: 100%;
+    }
+
+    .order-cta-wrap {
+        justify-content: space-between;
+    }
+
+    .order-date,
+    .order-option {
+        display: none;
+    }
+
+    .merachnt-wrapper h3 {
+        font-size: 15px;
+    }
+
+    .merchant-card {
+        padding: 10px 0;
+    }
+
+    .page-spacing,
+    .footer {
+        padding-left: 10px;
+        padding-right: 10px;
+    }
+
     .merchant-card .Polaris-Card {
-        width: 45%;
+        width: 100%;
         margin: 10px 0;
     }
 
@@ -673,15 +835,20 @@ span.month-detail {
     }
 
     .merchant-header .Polaris-Button {
-        width: 68px;
+        width: 48px;
         border-radius: 50%;
-        height: 68px;
+        height: 48px;
+    }
+
+    .congrats-wrap h3 {
+        font-size: 20px;
     }
 }
 
 @media (max-width: 480px) {
     .onboard-items .Polaris-Stack {
         flex-wrap: wrap;
+        margin: 0;
     }
 
     .onboard-items .Polaris-Stack__Item {
@@ -742,4 +909,22 @@ span.month-detail {
     .Subcription-card .Polaris-Badge {
         margin-left: 16px;
     }
+
+    .merchant-header {
+        width: auto;
+        margin: 10px 20px;
+    }
+
+    .merachnt-wrapper {
+        margin: 10px 20px;
+    }
+    .merchant-footer_wrap {
+        margin: 0 20px;
+    }
+    .merchant-footer_wrap .Polaris-Stack {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+    }
+    
 }

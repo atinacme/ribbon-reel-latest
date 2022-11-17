@@ -1,3 +1,4 @@
+import React, { useState, useCallback } from 'react';
 import {
     Heading, TextField, Icon, DatePicker, Button, Popover, OptionList, Pagination,
     IndexTable, Card, useIndexResourceState
@@ -5,55 +6,20 @@ import {
 import {
     SearchMinor, CalendarMinor, ImportMinor, SortMinor
 } from '@shopify/polaris-icons';
-import React, { useState, useCallback } from 'react'
+import { Footer } from '../components';
 
 export default function ReelOrders() {
     const [textFieldValue, setTextFieldValue] = useState();
-
-    const handleTextFieldChange = useCallback(
-        (value) => setTextFieldValue(value),
-        [],
-    );
-
     const [{ month, year }, setDate] = useState({ month: 1, year: 2018 });
     const [selectedDates, setSelectedDates] = useState({
         start: new Date('Wed Feb 07 2018 00:00:00 GMT-0500 (EST)'),
         end: new Date('Sat Feb 10 2018 00:00:00 GMT-0500 (EST)'),
     });
-
-    const handleMonthChange = useCallback(
-        (month, year) => setDate({ month, year }),
-        [],
-    );
-
     const [selected, setSelected] = useState([]);
-    const [popoverActive, setPopoverActive] = useState(true);
-
-    const togglePopoverActive = useCallback(
-        () => setPopoverActive((popoverActive) => !popoverActive),
-        [],
-    );
-
-    const activator = (
-        <Button onClick={togglePopoverActive} disclosure>
-            Options
-        </Button>
-    );
-
+    const [popoverActive, setPopoverActive] = useState(false);
+    const [calendarPopoverActive, setCalendarPopoverActive] = useState(false);
     const [moreFiltersSelected, setMoreFiltersSelected] = useState([]);
-    const [moreFiltersPopoverActive, setMoreFiltersPopoverActive] = useState(true);
-
-    const moreFiltersTogglePopoverActive = useCallback(
-        () => setMoreFiltersPopoverActive((moreFiltersPopoverActive) => !moreFiltersPopoverActive),
-        [],
-    );
-
-    const moreFiltersActivator = (
-        <Button onClick={moreFiltersTogglePopoverActive}>
-            More filters
-        </Button>
-    );
-
+    const [moreFiltersPopoverActive, setMoreFiltersPopoverActive] = useState(false);
     const customers = [
         {
             id: '1',
@@ -130,6 +96,49 @@ export default function ReelOrders() {
     const { selectedResources, allResourcesSelected, handleSelectionChange } =
         useIndexResourceState(customers);
 
+    const handleTextFieldChange = useCallback(
+        (value) => setTextFieldValue(value),
+        [],
+    );
+
+    const handleMonthChange = useCallback(
+        (month, year) => setDate({ month, year }),
+        [],
+    );
+
+    const calendarTogglePopoverActive = useCallback(
+        () => setCalendarPopoverActive((calendarPopoverActive) => !calendarPopoverActive),
+        [],
+    );
+
+    const calendarActivator = (
+        <Button onClick={calendarTogglePopoverActive} className="date">
+            Date Range <Icon source={CalendarMinor} color="base" />
+        </Button>
+    );
+
+    const togglePopoverActive = useCallback(
+        () => setPopoverActive((popoverActive) => !popoverActive),
+        [],
+    );
+
+    const activator = (
+        <Button onClick={togglePopoverActive} disclosure>
+            Options
+        </Button>
+    );
+
+    const moreFiltersTogglePopoverActive = useCallback(
+        () => setMoreFiltersPopoverActive((moreFiltersPopoverActive) => !moreFiltersPopoverActive),
+        [],
+    );
+
+    const moreFiltersActivator = (
+        <Button onClick={moreFiltersTogglePopoverActive}>
+            More filters
+        </Button>
+    );
+
     const rowMarkup = customers.map(
         ({ id, order, date, customer, total, reelRevenue, shippingStatus, reelStatus, items }, index) => (
             <IndexTable.Row
@@ -151,95 +160,110 @@ export default function ReelOrders() {
     );
 
     return (
-        <div>
+        <div className='order-wrapper'>
             <Heading>Reel Orders</Heading>
-            <div>
-                <TextField
-                    type="text"
-                    value={textFieldValue}
-                    onChange={handleTextFieldChange}
-                    prefix={<Icon
-                        source={SearchMinor}
-                        color="base"
-                    />}
-                    placeholder="Filter"
-                    autoComplete="off"
-                />
-                <Button>Date Range <Icon source={CalendarMinor} color="base" /></Button>
-                <DatePicker
-                    month={month}
-                    year={year}
-                    onChange={setSelectedDates}
-                    onMonthChange={handleMonthChange}
-                    selected={selectedDates}
-                    allowRange
-                />
-                <div style={{ height: '275px' }}>
-                    <Popover
-                        active={popoverActive}
-                        activator={activator}
-                        onClose={togglePopoverActive}
-                    >
-                        <OptionList
-                            onChange={setSelected}
-                            options={[
-                                {
-                                    value: 'byward_market',
-                                    label: 'Byward Market',
-                                    // active: true,
-                                },
-                                { value: 'centretown', label: 'Centretown' },
-                                {
-                                    value: 'hintonburg',
-                                    label: 'Hintonburg',
-                                    // active: true,
-                                },
-                                { value: 'westboro', label: 'Westboro' },
-                                { value: 'downtown', label: 'Downtown' },
-                            ]}
-                            selected={selected}
-                        />
-                    </Popover>
+            <div className='reels-order_body'>
+                <div className='order-serach_wrap'>
+                    <TextField
+                        type="text"
+                        value={textFieldValue}
+                        onChange={handleTextFieldChange}
+                        prefix={<Icon
+                            source={SearchMinor}
+                            color="base"
+                        />}
+                        placeholder="Filter"
+                        autoComplete="off"
+                    />
                 </div>
-                <div style={{ height: '275px' }}>
-                    <Popover
-                        active={moreFiltersPopoverActive}
-                        activator={moreFiltersActivator}
-                        onClose={moreFiltersTogglePopoverActive}
-                    >
-                        <OptionList
-                            onChange={setMoreFiltersSelected}
-                            options={[
-                                {
-                                    value: 'byward_market',
-                                    label: 'Byward Market',
-                                    // active: true,
-                                },
-                                { value: 'centretown', label: 'Centretown' },
-                                {
-                                    value: 'hintonburg',
-                                    label: 'Hintonburg',
-                                    // active: true,
-                                },
-                                { value: 'westboro', label: 'Westboro' },
-                                { value: 'downtown', label: 'Downtown' },
-                            ]}
-                            selected={moreFiltersSelected}
-                        />
-                    </Popover>
+                <div className='order-cta-wrap'>
+                    <div className='order-date'>
+                        <div>
+                            <Popover
+                                active={calendarPopoverActive}
+                                activator={calendarActivator}
+                                onClose={calendarTogglePopoverActive}
+                            >
+                                <DatePicker
+                                    month={month}
+                                    year={year}
+                                    onChange={setSelectedDates}
+                                    onMonthChange={handleMonthChange}
+                                    selected={selectedDates}
+                                    allowRange
+                                />
+                            </Popover>
+                        </div>
+                    </div>
+                    <div className='order-option'>
+                        <Popover
+                            active={popoverActive}
+                            activator={activator}
+                            onClose={togglePopoverActive}
+                        >
+                            <OptionList
+                                onChange={setSelected}
+                                options={[
+                                    {
+                                        value: 'byward_market',
+                                        label: 'Byward Market',
+                                        // active: true,
+                                    },
+                                    { value: 'centretown', label: 'Centretown' },
+                                    {
+                                        value: 'hintonburg',
+                                        label: 'Hintonburg',
+                                        // active: true,
+                                    },
+                                    { value: 'westboro', label: 'Westboro' },
+                                    { value: 'downtown', label: 'Downtown' },
+                                ]}
+                                selected={selected}
+                            />
+                        </Popover>
+                    </div>
+                    <div>
+                        <Popover
+                            active={moreFiltersPopoverActive}
+                            activator={moreFiltersActivator}
+                            onClose={moreFiltersTogglePopoverActive}
+                        >
+                            <OptionList
+                                onChange={setMoreFiltersSelected}
+                                options={[
+                                    {
+                                        value: 'byward_market',
+                                        label: 'Byward Market',
+                                        // active: true,
+                                    },
+                                    { value: 'centretown', label: 'Centretown' },
+                                    {
+                                        value: 'hintonburg',
+                                        label: 'Hintonburg',
+                                        // active: true,
+                                    },
+                                    { value: 'westboro', label: 'Westboro' },
+                                    { value: 'downtown', label: 'Downtown' },
+                                ]}
+                                selected={moreFiltersSelected}
+                            />
+                        </Popover>
+                    </div>
+                    <Button><Icon source={ImportMinor} color="base" />Download</Button>
+                    <Button><Icon source={SortMinor} color="base" />Sort</Button>
                 </div>
-                <Button><Icon source={ImportMinor} color="base" />Download</Button>
-                <Button><Icon source={SortMinor} color="base" />Sort</Button>
-                <Pagination
-                    hasPrevious
-                    onPrevious={() => {
-                        console.log('Previous');
-                    }}
-                    hasNext
-                    onNext={() => {
-                        console.log('Next');
-                    }}
-                />
+                <div className='pagination-wrap'>
+                    <Pagination
+                        hasPrevious
+                        onPrevious={() => {
+                            console.log('Previous');
+                        }}
+                        hasNext
+                        onNext={() => {
+                            console.log('Next');
+                        }}
+                    />
+                </div>
             </div>
             <Card>
                 <IndexTable
@@ -263,6 +287,7 @@ export default function ReelOrders() {
                     {rowMarkup}
                 </IndexTable>
             </Card>
+            <Footer />
         </div>
     )
 }

@@ -1,111 +1,201 @@
+import React, { useState } from 'react'
 import {
-  Card,
-  Page,
-  Layout,
-  TextContainer,
-  Banner,
-  Link,
-  Heading,
-  Button,
-  Thumbnail,
-  Stack
+  Card, Page, Layout, TextContainer, Link, Heading, Button, Thumbnail, Stack, ButtonGroup, Banner
 } from "@shopify/polaris";
-import { TitleBar, useNavigate } from "@shopify/app-bridge-react";
-import '../node_modules/bootstrap/dist/css/bootstrap.min.css';
-import { trophyImage } from "../assets";
-
-import { ProductsCard } from "../components";
+import { TitleBar } from "@shopify/app-bridge-react";
+import { Mark, Vector1 } from "../assets";
+import { YourInfo, SubscriptionPlan, Style } from '../components';
 
 export default function HomePage() {
-  const navigate = useNavigate();
+  const [page, setPage] = useState(1);
+  const [freeTrial, setFreeTrail] = useState(false)
+  const handleBack = () => {
+    if (page === 1) {
+      setFreeTrail(false)
+    } else if (page === 2) {
+      setPage(1)
+    } else {
+      setPage(2)
+    }
+  }
+  const handleNext = () => {
+    if (page === 1) {
+      setPage(2)
+    } else if (page === 2) {
+      setPage(3)
+    } else {
+      setPage(4)
+    }
+  }
   return (
-    <Page narrowWidth>
-      <TitleBar title="App name" primaryAction={null} />
-      <Stack>
-        <Stack.Item fill>
-          <Heading>Approve Subscription</Heading>
-        </Stack.Item>
-        <Stack.Item>
-          <Button>Cancel</Button>
-        </Stack.Item>
-      </Stack>
-      <div style={{ width: '100%', float: 'right' }}>
-        <Banner
-          title="Before you can purchase a shipping label, this change needs to be made:"
-          status="warning"
-        ></Banner>
-      </div>
-      <Layout>
-        <div className="riben-reels-wrapper">
-          <div className="left-ribon-reels_plan">
-            <Layout.Section>
-              <Card sectioned>
-                <TextContainer>
-                  <div className="riben-content">
-                    <div className="riben-content_img"><svg xmlns="http://www.w3.org/2000/svg" width="35" height="25" viewBox="0 0 35 25" fill="none">
-                      <path fillRule="evenodd" clipRule="evenodd" d="M0.0378113 0.681641H4.8395C6.11223 0.681641 7.33284 1.18723 8.2328 2.08719C9.13275 2.98715 9.63834 4.20775 9.63834 5.48049H4.8395V15.081C5.46992 15.081 6.09416 15.2052 6.67656 15.4466C7.25897 15.6879 7.78812 16.0417 8.23377 16.4876C8.67942 16.9335 9.03284 17.4628 9.27384 18.0454C9.51484 18.6279 9.63869 19.2523 9.63831 19.8827V24.6816H4.83947V15.081C4.20905 15.0814 3.58473 14.9575 3.00219 14.7165C2.41964 14.4755 1.89028 14.1221 1.44437 13.6765C0.998451 13.2308 0.644716 12.7017 0.403373 12.1193C0.162032 11.5369 0.0378113 10.9126 0.0378113 10.2822V0.681641ZM9.63834 5.48049C10.2688 5.48048 10.893 5.6047 11.4754 5.84605C12.0578 6.08739 12.587 6.44112 13.0326 6.88704C13.4783 7.33295 13.8317 7.86231 14.0727 8.44486C14.3137 9.02741 14.4376 9.65174 14.4372 10.2822V15.081C13.1645 15.081 11.9439 14.5754 11.0439 13.6755C10.1439 12.7755 9.63834 11.5549 9.63834 10.2822V5.48049ZM24.5725 0.681641V5.48049C24.5721 6.11092 24.696 6.73525 24.937 7.3178C25.178 7.90035 25.5314 8.4297 25.9771 8.87562C26.4227 9.32153 26.9518 9.67527 27.5343 9.91661C28.1167 10.158 28.7409 10.2822 29.3714 10.2822L29.3714 19.8827H24.5725C24.5725 21.1554 25.0781 22.376 25.9781 23.276C26.878 24.176 28.0986 24.6816 29.3714 24.6816H34.173V15.081C34.173 14.4506 34.0488 13.8263 33.8075 13.2439C33.5661 12.6615 33.2124 12.1324 32.7665 11.6867C32.3206 11.2411 31.7912 10.8876 31.2087 10.6466C30.6261 10.4057 30.0018 10.2818 29.3714 10.2822V0.681641H24.5725ZM14.972 5.48049V0.681641H19.7737V10.2822C21.0464 10.2822 22.267 10.7878 23.1669 11.6877C24.0669 12.5877 24.5725 13.8083 24.5725 15.081V19.8827C23.942 19.8827 23.3178 19.7585 22.7354 19.5171C22.153 19.2758 21.6238 18.9221 21.1782 18.4762C20.7325 18.0302 20.3791 17.5009 20.1381 16.9183C19.8971 16.3358 19.7733 15.7115 19.7736 15.081V10.2822C18.5002 10.2822 17.2788 9.77628 16.3784 8.87579C15.4779 7.9753 14.972 6.75397 14.972 5.48049ZM14.4372 24.6816V15.081C15.7107 15.081 16.932 15.5869 17.8325 16.4874C18.733 17.3879 19.2389 18.6092 19.2389 19.8827V24.6816H14.4372Z" fill="white" />
-                    </svg></div>
-                    <div className="riben-heading">
+    <>
+      {!freeTrial ?
+        <Page narrowWidth>
+          <TitleBar title="App name" primaryAction={null} />
+          <Stack>
+            <Stack.Item fill>
+              <Heading>Approve Subscription</Heading>
+            </Stack.Item>
+            <Stack.Item>
+              <Button>Cancel</Button>
+            </Stack.Item>
+          </Stack>
+          <div style={{ width: '100%', float: 'right' }}>
+            <Banner
+              title="Before you can purchase a shipping label, this change needs to be made:"
+              status="warning"
+            ></Banner>
+          </div>
+          <Layout>
+            <div className="riben-reels-wrapper">
+              <div className="left-ribon-reels_plan">
+                <Layout.Section>
+                  <Card sectioned>
+                    <TextContainer>
+                      <div className="riben-content">
+                        <div className="riben-content_img">
+                          <svg xmlns="http://www.w3.org/2000/svg" width="51" height="51" viewBox="0 0 51 51" fill="none">
+                            <rect width="51" height="51" rx="3.1875" fill="#4F0ACC" />
+                            <g clipPath="url(#clip0_317_11490)">
+                              <path fillRule="evenodd" clipRule="evenodd" d="M8.03781 13.6816H12.8395C14.1122 13.6816 15.3328 14.1872 16.2328 15.0872C17.1328 15.9871 17.6383 17.2078 17.6383 18.4805H12.8395V28.081C13.4699 28.081 14.0942 28.2052 14.6766 28.4466C15.259 28.6879 15.7881 29.0417 16.2338 29.4876C16.6794 29.9335 17.0328 30.4628 17.2738 31.0454C17.5148 31.6279 17.6387 32.2523 17.6383 32.8827V37.6816H12.8395V28.081C12.209 28.0814 11.5847 27.9575 11.0022 27.7165C10.4196 27.4755 9.89028 27.1221 9.44437 26.6765C8.99845 26.2308 8.64472 25.7017 8.40337 25.1193C8.16203 24.5369 8.03781 23.9126 8.03781 23.2822V13.6816ZM17.6383 18.4805C18.2688 18.4805 18.893 18.6047 19.4754 18.846C20.0578 19.0874 20.587 19.4411 21.0326 19.887C21.4783 20.333 21.8317 20.8623 22.0727 21.4449C22.3137 22.0274 22.4376 22.6517 22.4372 23.2822V28.081C21.1645 28.081 19.9439 27.5754 19.0439 26.6755C18.1439 25.7755 17.6383 24.5549 17.6383 23.2822V18.4805ZM32.5725 13.6816V18.4805C32.5721 19.1109 32.696 19.7352 32.937 20.3178C33.178 20.9003 33.5314 21.4297 33.9771 21.8756C34.4227 22.3215 34.9518 22.6753 35.5343 22.9166C36.1167 23.158 36.7409 23.2822 37.3714 23.2822L37.3714 32.8827H32.5725C32.5725 34.1554 33.0781 35.376 33.9781 36.276C34.878 37.176 36.0986 37.6816 37.3714 37.6816H42.173V28.081C42.173 27.4506 42.0488 26.8263 41.8075 26.2439C41.5661 25.6615 41.2124 25.1324 40.7665 24.6867C40.3206 24.2411 39.7912 23.8876 39.2087 23.6466C38.6261 23.4057 38.0018 23.2818 37.3714 23.2822V13.6816H32.5725ZM22.972 18.4805V13.6816H27.7737V23.2822C29.0464 23.2822 30.267 23.7878 31.1669 24.6877C32.0669 25.5877 32.5725 26.8083 32.5725 28.081V32.8827C31.942 32.8827 31.3178 32.7585 30.7354 32.5171C30.153 32.2758 29.6238 31.9221 29.1782 31.4762C28.7325 31.0302 28.3791 30.5009 28.1381 29.9183C27.8971 29.3358 27.7733 28.7115 27.7736 28.081V23.2822C26.5002 23.2822 25.2788 22.7763 24.3784 21.8758C23.4779 20.9753 22.972 19.754 22.972 18.4805ZM22.4372 37.6816V28.081C23.7107 28.081 24.932 28.5869 25.8325 29.4874C26.733 30.3879 27.2389 31.6092 27.2389 32.8827V37.6816H22.4372Z" fill="white" />
+                            </g>
+                            <defs>
+                              <clipPath id="clip0_317_11490">
+                                <rect width="34.1352" height="23.9999" fill="white" transform="translate(8.03781 13.6816)" />
+                              </clipPath>
+                            </defs>
+                          </svg>
+                        </div>
+                        <div className="riben-heading">
+                          <Heading>Ribbon Reel</Heading>
+                          <div style={{ display: 'flex' }}>by<span className="placeholder col-6"></span></div>
+                        </div>
+                      </div>
+                    </TextContainer>
+                    <hr />
+                    <TextContainer>
                       <Heading>Ribbon Reel</Heading>
-                      <div style={{ display: 'flex' }}>by<span className="placeholder col-6"></span></div>
+                      <div style={{ display: 'flex' }}><span className="placeholder col-6" style={{ width: '54px', height: '19px', marginleft: '5px' }}></span>USD every 30 days</div>
+                      <div style={{ display: 'flex' }}>Basic Plan-<span className="placeholder col-6" style={{ width: '54px', height: '19px', margin: '0 5px' }}></span>USD</div>
+                    </TextContainer>
+                  </Card>
+                </Layout.Section>
+              </div>
+              <div className="right_riben-reels">
+                <Layout.Section>
+                  <Card title="On your next bill" sectioned>
+                    <TextContainer>
+                      <div style={{ display: 'block', margin: '5px' }}>
+                        <div className="heading-with-bg">  <Heading>Ribbon Reel</Heading> </div>
+                        <div style={{ display: 'flex', alignItems: 'center' }}>$<span className="placeholder col-6" style={{ width: '44px', height: '19px' }}></span>USD</div>
+                        <p>Recurring every 30 days</p>
+                        <p>Starts today</p>
+                      </div>
+                    </TextContainer>
+                    <hr />
+                    <div className="riben-para">
+                      <p>30 days free trial</p>
+                      <p>Trial ends 19th August 2021</p>
                     </div>
-                  </div>
-                </TextContainer>
-                <hr />
-                <TextContainer>
-                  <Heading>Ribbon Reel</Heading>
-                  <div style={{ display: 'flex' }}><span className="placeholder col-6" style={{ width: '54px', height: '19px', marginleft: '5px' }}></span>USD every 30 days</div>
-                  <div style={{ display: 'flex' }}>Basic Plan-<span className="placeholder col-6" style={{ width: '54px', height: '19px', margin: '0 5px' }}></span>USD</div>
-                </TextContainer>
-              </Card>
-            </Layout.Section>
+                    <hr />
+                    <Stack>
+                      <Stack.Item fill>
+                        <p>Amount</p>
+                      </Stack.Item>
+                      <Stack.Item>
+                        <strong>$<span className="placeholder col-6" style={{
+                          width: '43px',
+                          height: '15px'
+                        }}></span>USD</strong>
+                      </Stack.Item>
+                    </Stack>
+                    <Stack>
+                      <Stack.Item fill>
+                        <p>Date</p>
+                      </Stack.Item>
+                      <Stack.Item>
+                        <strong>19th August 2021</strong>
+                      </Stack.Item>
+                    </Stack>
+                    <div style={{ padding: '20px' }}> <Button style={{ width: 'auto' }} primary onClick={() => setFreeTrail(true)}>Start free trial</Button></div>
+                  </Card>
+                </Layout.Section>
+              </div>
+            </div>
+          </Layout>
+          <div style={{ textAlignLast: 'center' }}>
+            By proceeding, you are agreeing to the <Link>Terms of Service</Link>,<br />
+            Subject to government tax and other prevailing charges.
           </div>
-          <div className="right_riben-reels">
-            <Layout.Section>
-              <Card title="On your next bill" sectioned>
-                <TextContainer>
-                  <div style={{ display: 'block', margin: '5px' }}>
-                    <div className="heading-with-bg">  <Heading>Ribbon Reel</Heading> </div>
-                    <div style={{ display: 'flex', alignItems: 'center' }}>$<span className="placeholder col-6" style={{ width: '44px', height: '19px' }}></span>USD</div>
-                    <p>Recurring every 30 days</p>
-                    <p>Starts today</p>
-                  </div>
-                </TextContainer>
-                <hr />
-                <div className="riben-para">
-                  <p>30 days free trial</p>
-                  <p>Trial ends 19th August 2021</p>
+        </Page>
+        :
+        <div className='onboard-wrap'>
+          <Page narrowWidth>
+            <div className='onboard-items'>
+              <Stack fill>
+                <Stack.Item><div style={{ display: 'flex', alignItems: 'center' }}><Thumbnail size="small" alt="logo" source={Mark} /><h2>ribbonreel</h2></div></Stack.Item>
+                <div className='onboard-progressbar'>
+                  <TextContainer>
+                    <div className='progress-wrap'>
+                      <span>1</span>
+                      <div className="progress">
+                        <div className="progress-bar" role="progressbar" style={{ width: '100%' }} aria-valuenow="100" aria-valuemin="0" aria-valuemax="100"></div>
+                      </div>
+                    </div>
+                    <div className='progress-wrap'>
+                      <span>2</span>
+                      <div className="progress">
+                        <div className="progress-bar" role="progressbar" style={{ width: '100%' }} aria-valuenow="100" aria-valuemin="0" aria-valuemax="100"></div>
+                      </div>
+                    </div>
+                    <div className='progress-wrap'>
+                      <span>3</span>
+                    </div>
+                  </TextContainer>
                 </div>
-                <hr />
+              </Stack>
+            </div>
+            {page === 1 ?
+              <YourInfo />
+              : page === 2 ?
+                <SubscriptionPlan />
+                : page === 3 ?
+                  <Style />
+                  :
+                  <Layout>
+                    <Layout.Section>
+                      <div className='congrats-wrap'>
+                        <Card sectioned>
+                          <div style={{ display: 'block', alignItems: 'center' }}>
+                            <Stack.Item><Thumbnail size="small" alt="logo" source={Vector1} /></Stack.Item>
+                            <h3>Congratulations you finished setting up RibbonReel!</h3>
+                            <h4>Your customers can now gift thier firends and family with Reels.</h4>
+                            <Stack.Item><Button>Continue to Site</Button></Stack.Item>
+                            <Stack.Item><Thumbnail size="small" alt="logo" source={Mark} />ribbonreel</Stack.Item>
+                          </div>
+                        </Card>
+                      </div>
+                    </Layout.Section>
+                  </Layout>
+            }
+            {page === 1 || page === 2 || page === 3 ?
+              <div className='copyright'>
                 <Stack>
-                  <Stack.Item fill>
-                    <p>Amount</p>
+                  <Stack.Item>
+                    © 2022 RibbonReel. All rights reserved. <span>Privacy Policy</span>
                   </Stack.Item>
                   <Stack.Item>
-                    <strong>$<span className="placeholder col-6" style={{
-                      width: '43px',
-                      height: '15px'
-                    }}></span>USD</strong>
+                    <ButtonGroup>
+                      <Button onClick={handleBack}>Back</Button>
+                      <div className="next-cta"><Button onClick={handleNext}>Next</Button></div>
+                    </ButtonGroup>
                   </Stack.Item>
                 </Stack>
-                <Stack>
-                  <Stack.Item fill>
-                    <p>Date</p>
-                  </Stack.Item>
-                  <Stack.Item>
-                    <strong>19th August 2021</strong>
-                  </Stack.Item>
-                </Stack>
-                <div style={{ padding: '20px' }}> <Button style={{ width: 'auto' }} primary onClick={() => navigate("/OnboardingInfo")}>Start free trial</Button></div>
-              </Card>
-            </Layout.Section>
-          </div>
+              </div>
+              : null}
+          </Page>
         </div>
-      </Layout>
-      <div style={{ textAlignLast: 'center' }}>
-        By proceeding, you are agreeing to the <Link>Terms of Service</Link>,<br />
-        Subject to government tax and other prevailing charges.
-      </div>
-    </Page>
+      }
+    </>
   );
 }
