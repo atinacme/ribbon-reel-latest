@@ -189,7 +189,6 @@ h2 {
     max-width: 600px;
 }
 
-.Subcription-card .Polaris-Card,
 .compact-layout_card .Polaris-Card {
     width: 32%;
     margin-top: 0;
@@ -298,10 +297,6 @@ h2 {
 span.month-detail {
     font-weight: 400;
     font-size: 17.0978px;
-}
-
-.Subcription-month_wrap .Polaris-Stack__Item:last-child {
-    margin-left: 0;
 }
 
 .Subcription-card li {
@@ -723,7 +718,151 @@ span.month-detail {
     fill: #fff;
 }
 
+/* Start settingpage Css  */
+.ctaWrap {
+    position: absolute;
+    right: 44px;
+    top: 42px;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+}
+
+.merchant-footer_wrap {
+    margin: 20px;
+    padding-bottom: 20px;
+}
+
+.subWrap {
+    display: flex;
+    align-items: center;
+}
+
+.subWrap .Polaris-TextContainer {
+    margin: 0 30px;
+}
+
+.notifyWrap span.Polaris-Choice__Label {
+    font-size: 14px;
+    color: #202223;
+    font-weight: 700;
+}
+
+.saveCta button,
+.saveCta button:hover {
+    background-color: #4F0ACC;
+    color: #fff;
+}
+
+.Subcription-card .Polaris-Card {
+    padding: 20px;
+    border: 1px solid #c4bcbc;
+}
+
+.subWrap .Polaris-Card {
+    background: transparent;
+    box-shadow: unset;
+}
+
+.subWrap {
+    display: flex;
+    align-items: center;
+    background: #fff;
+    box-shadow: var(--p-shadow-card);
+}
+
+.Subcription-card {
+    padding-bottom: 25px;
+}
+
+.styleWrap .compact-layout_card .Polaris-DropZone__Container {
+    border: none;
+}
+
+.styleWrap .compact-layout_card .Polaris-DropZone__Container p {
+    margin: 0;
+}
+
+.styleWrap .compact-dropzone {
+    padding: 20px;
+}
+
+.settingwrap {
+    position: relative;
+}
+
+.Subcription-card.Polaris-Card__Section.active .Polaris-Card {
+    border: 1px solid blue;
+    border-radius: 8px;
+}
+
+.Subcription-card.Polaris-Card__Section.active .Polaris-Badge span {
+    color: blue;
+}
+
+.Subcription-card .Polaris-Stack .Polaris-Stack__Item {
+    width: 100%;
+}
+
+.slected p {
+    padding: 0;
+    margin: 0;
+
+    text-align: right;
+    font-size: 14px;
+}
+
+.Subcription-card.Polaris-Card__Section.active .slected p {
+    color: blue;
+    padding-right: 10px;
+}
+
+.Subcription-card .slected {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    width: 100%;
+    padding: 10px 0 0;
+    position: relative;
+}
+
+.Subcription-card .slected:before {
+    position: absolute;
+    width: 114%;
+    height: 2px;
+    background: #f3f1f1;
+    content: '';
+    top: 0;
+    left: -20%;
+    right: -20%;
+    margin: 0 auto;
+}
+
+.Subcription-card.Polaris-Card__Section.active {
+    padding-bottom: 0;
+}
+
+.Subcription-card .Polaris-Card__Section {
+    padding: 0;
+}
+
+.subscription-wrapper .Subcription-card.Polaris-Card__Section {
+    width: 30%;
+}
+
+.Subcription-card .Polaris-Card {
+    padding-bottom: 10px;
+}
+
 @media (max-width: 1024px) {
+    .Subcription-card {
+        flex-wrap: wrap;
+    }
+
+    .subscription-wrapper .Subcription-card.Polaris-Card__Section {
+        width: 48%;
+        margin-bottom: 10px;
+    }
 
     .left-ribon-reels_plan,
     .right_riben-reels {
@@ -742,7 +881,6 @@ span.month-detail {
         font-size: 20px;
         font-weight: 700;
         color: #202223;
-        /* padding-bottom: 20px; */
     }
 
     .order-cta-wrap {
@@ -768,6 +906,40 @@ span.month-detail {
 }
 
 @media (max-width: 769px) {
+    .subscription-wrapper .Subcription-card.Polaris-Card__Section {
+        width: 100%;
+    }
+
+    .Subcription-card .slected:before {
+        width: 110%;
+    }
+
+    .ctaWrap {
+        position: absolute;
+        right: 0;
+        bottom: 0px;
+        justify-content: flex-start;
+        left: 0;
+    }
+
+    .styleWrap .compact-dropzone {
+        padding: 20px 10px;
+    }
+
+    .styleWrap .compact-layout_card .Polaris-DropZone-FileUpload__Action {
+        font-size: 11px;
+    }
+
+    .settingWrapper .merchant-footer_wrap .Polaris-Stack__Item {
+        display: flex;
+        align-items: self-start;
+        flex-direction: column;
+    }
+
+    .settingWrapper .info-wrapper {
+        padding-bottom: 45px;
+    }
+
     .order-serach_wrap {
         width: 70%;
     }
@@ -843,9 +1015,7 @@ span.month-detail {
     .congrats-wrap h3 {
         font-size: 20px;
     }
-}
 
-@media (max-width: 480px) {
     .onboard-items .Polaris-Stack {
         flex-wrap: wrap;
         margin: 0;
@@ -892,11 +1062,6 @@ span.month-detail {
         flex-wrap: wrap;
     }
 
-    .Subcription-card .Polaris-Card__Section.active {
-        border: 1px solid blue;
-        border-radius: 8px;
-    }
-
     .onboard-items {
         margin-left: 0;
         max-width: 100%;
@@ -918,13 +1083,15 @@ span.month-detail {
     .merachnt-wrapper {
         margin: 10px 20px;
     }
+
     .merchant-footer_wrap {
         margin: 0 20px;
     }
+
     .merchant-footer_wrap .Polaris-Stack {
         display: flex;
         align-items: center;
         justify-content: space-between;
     }
-    
+
 }

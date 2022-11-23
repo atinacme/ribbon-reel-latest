@@ -36,8 +36,7 @@ export default function applyAuthMiddleware(
             );
           } else {
             console.log(
-              `Failed to register ${topic} webhook: ${
-                JSON.stringify(response.result.data, undefined, 2)
+              `Failed to register ${topic} webhook: ${JSON.stringify(response.result.data, undefined, 2)
               }`
             );
           }

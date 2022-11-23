@@ -1,0 +1,1 @@
+export const HOME_PAGE_ITEM = "HOME_PAGE_ITEM";

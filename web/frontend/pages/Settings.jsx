@@ -35,21 +35,28 @@ export default function Settings() {
     ];
     return (
         <>
-            <Tabs tabs={tabs} selected={selected} onSelect={handleTabChange}>
-                <ButtonGroup>
-                    <Button>Cancel</Button>
-                    <Button primary>Save</Button>
-                </ButtonGroup>
-                {selected === 0 ?
-                    <YourInfo />
-                    : selected === 1 ?
-                        <Style />
-                        : selected === 2 ?
-                            <SubscriptionPlan />
-                            : <Notifications />
-                }
-            </Tabs>
-            <Footer />
+            <card className="settingWrapper">
+                <Tabs className="tabsWrap" tabs={tabs} selected={selected} onSelect={handleTabChange}>
+                    <div className='settingwrap'>
+                        <div className='ctaWrap'>
+                            <ButtonGroup>
+                                <Button>Cancel</Button>
+                                <div className='saveCta'><Button>Save</Button></div>
+                            </ButtonGroup>
+                        </div>
+
+                        {selected === 0 ?
+                            <YourInfo />
+                            : selected === 1 ?
+                                <div className='styleWrap'>  <Style /></div>
+                                : selected === 2 ?
+                                    <div className='subWrap'>  <SubscriptionPlan /></div>
+                                    : <div className='notifyWrap'> <Notifications /></div>
+                        }
+                    </div>
+                </Tabs>
+                <Footer />
+            </card>
         </>
     )
 }

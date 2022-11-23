@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useEffect } from 'react';
 import {
     Heading, TextField, Icon, DatePicker, Button, Popover, OptionList, Pagination,
     IndexTable, Card, useIndexResourceState
@@ -7,6 +7,7 @@ import {
     SearchMinor, CalendarMinor, ImportMinor, SortMinor
 } from '@shopify/polaris-icons';
 import { Footer } from '../components';
+import { useAuthenticatedFetch } from '../hooks';
 
 export default function ReelOrders() {
     const [textFieldValue, setTextFieldValue] = useState();
@@ -15,79 +16,21 @@ export default function ReelOrders() {
         start: new Date('Wed Feb 07 2018 00:00:00 GMT-0500 (EST)'),
         end: new Date('Sat Feb 10 2018 00:00:00 GMT-0500 (EST)'),
     });
+    const [customers, setCustomers] = useState([])
     const [selected, setSelected] = useState([]);
     const [popoverActive, setPopoverActive] = useState(false);
     const [calendarPopoverActive, setCalendarPopoverActive] = useState(false);
     const [moreFiltersSelected, setMoreFiltersSelected] = useState([]);
     const [moreFiltersPopoverActive, setMoreFiltersPopoverActive] = useState(false);
-    const customers = [
-        {
-            id: '1',
-            order: '#2901',
-            date: 'Today at 6:55am',
-            customer: 'Guy Hawkins',
-            total: '$396.84',
-            reelRevenue: '$1.99',
-            shippingStatus: 'New Order',
-            reelStatus: 'Pending',
-            items: '1 item'
-        },
-        {
-            id: '2',
-            order: '#2901',
-            date: 'Oct 12 at 6:55am',
-            customer: 'Ralph Edwards',
-            total: '$589.99',
-            reelRevenue: '$1.99',
-            shippingStatus: 'On Delivery',
-            reelStatus: 'Recorded',
-            items: '2 items'
-        },
-        {
-            id: '3',
-            order: '#2901',
-            date: 'Today at 6:55am',
-            customer: 'Guy Hawkins',
-            total: '$396.84',
-            reelRevenue: '$1.99',
-            shippingStatus: 'New Order',
-            reelStatus: 'Pending',
-            items: '1 item'
-        },
-        {
-            id: '4',
-            order: '#2901',
-            date: 'Oct 12 at 6:55am',
-            customer: 'Ralph Edwards',
-            total: '$589.99',
-            reelRevenue: '$1.99',
-            shippingStatus: 'On Delivery',
-            reelStatus: 'Recorded',
-            items: '2 items'
-        },
-        {
-            id: '5',
-            order: '#2901',
-            date: 'Today at 6:55am',
-            customer: 'Guy Hawkins',
-            total: '$396.84',
-            reelRevenue: '$1.99',
-            shippingStatus: 'New Order',
-            reelStatus: 'Pending',
-            items: '1 item'
-        },
-        {
-            id: '6',
-            order: '#2901',
-            date: 'Oct 12 at 6:55am',
-            customer: 'Ralph Edwards',
-            total: '$589.99',
-            reelRevenue: '$1.99',
-            shippingStatus: 'On Delivery',
-            reelStatus: 'Recorded',
-            items: '2 items'
-        }
-    ];
+    const fetch = useAuthenticatedFetch();
+
+    useEffect(() => {
+        const handleGetAllOrders = async () => {
+            fetch("/api/orders/all").then((res) => res.json()).then((data) => setCustomers(data));
+        };
+        handleGetAllOrders();
+    }, [])
+
     const resourceName = {
         singular: 'customer',
         plural: 'customers',
@@ -140,21 +83,21 @@ export default function ReelOrders() {
     );
 
     const rowMarkup = customers.map(
-        ({ id, order, date, customer, total, reelRevenue, shippingStatus, reelStatus, items }, index) => (
+        (item, index) => (
             <IndexTable.Row
-                id={id}
-                key={id}
-                selected={selectedResources.includes(id)}
+                id={item.id}
+                key={item.id}
+                selected={selectedResources.includes(item.id)}
                 position={index}
             >
-                <IndexTable.Cell>{order}</IndexTable.Cell>
-                <IndexTable.Cell>{date}</IndexTable.Cell>
-                <IndexTable.Cell>{customer}</IndexTable.Cell>
-                <IndexTable.Cell>{total}</IndexTable.Cell>
-                <IndexTable.Cell>{reelRevenue}</IndexTable.Cell>
-                <IndexTable.Cell>{shippingStatus}</IndexTable.Cell>
-                <IndexTable.Cell>{reelStatus}</IndexTable.Cell>
-                <IndexTable.Cell>{items}</IndexTable.Cell>
+                <IndexTable.Cell>#{item.order_number}</IndexTable.Cell>
+                <IndexTable.Cell>{item.created_at}</IndexTable.Cell>
+                <IndexTable.Cell>{item.customer.default_address.company}</IndexTable.Cell>
+                <IndexTable.Cell>{item.total_price}</IndexTable.Cell>
+                {/* <IndexTable.Cell>{reelRevenue}</IndexTable.Cell> */}
+                <IndexTable.Cell>{item.fulfillments.length > 0 ? item.fulfillments[0].shipment_status : ''}</IndexTable.Cell>
+                {/* <IndexTable.Cell>{reelStatus}</IndexTable.Cell> */}
+                <IndexTable.Cell>{item.line_items.length}</IndexTable.Cell>
             </IndexTable.Row>
         ),
     );

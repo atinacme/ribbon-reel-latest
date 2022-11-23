@@ -8,6 +8,8 @@ import {
   PolarisProvider,
 } from "./components";
 import './node_modules/bootstrap/dist/css/bootstrap.min.css';
+import { Provider } from "react-redux";
+import store from "./store";
 
 export default function App() {
   // Any .tsx or .jsx files in /pages will become a route
@@ -15,34 +17,36 @@ export default function App() {
   const pages = import.meta.globEager("./pages/**/!(*.test.[jt]sx)*.([jt]sx)");
 
   return (
-    <PolarisProvider>
-      <BrowserRouter>
-        <AppBridgeProvider>
-          <QueryProvider>
-            <NavigationMenu
-              navigationLinks={[
-                {
-                  label: "Overview",
-                  destination: "/Overview",
-                },
-                {
-                  label: "Reel Orders",
-                  destination: "/ReelOrders",
-                },
-                {
-                  label: "Settings",
-                  destination: "/Settings",
-                },
-                {
-                  label: "Support",
-                  destination: "/Support",
-                }
-              ]}
-            />
-            <Routes pages={pages} />
-          </QueryProvider>
-        </AppBridgeProvider>
-      </BrowserRouter>
-    </PolarisProvider>
+    <Provider store={store}>
+      <PolarisProvider>
+        <BrowserRouter>
+          <AppBridgeProvider>
+            <QueryProvider>
+              <NavigationMenu
+                navigationLinks={[
+                  {
+                    label: "Overview",
+                    destination: "/Overview",
+                  },
+                  {
+                    label: "Reel Orders",
+                    destination: "/ReelOrders",
+                  },
+                  {
+                    label: "Settings",
+                    destination: "/Settings",
+                  },
+                  {
+                    label: "Support",
+                    destination: "/Support",
+                  }
+                ]}
+              />
+              <Routes pages={pages} />
+            </QueryProvider>
+          </AppBridgeProvider>
+        </BrowserRouter>
+      </PolarisProvider>
+    </Provider>
   );
 }

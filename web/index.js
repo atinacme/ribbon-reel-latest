@@ -34,7 +34,7 @@ Shopify.Context.initialize({
   // This should be replaced with your preferred storage strategy
   // See note below regarding using CustomSessionStorage with this template.
   SESSION_STORAGE: new Shopify.Session.SQLiteSessionStorage(DB_PATH),
-  ...(process.env.SHOP_CUSTOM_DOMAIN && {CUSTOM_SHOP_DOMAINS: [process.env.SHOP_CUSTOM_DOMAIN]}),
+  ...(process.env.SHOP_CUSTOM_DOMAIN && { CUSTOM_SHOP_DOMAINS: [process.env.SHOP_CUSTOM_DOMAIN] }),
 });
 
 // NOTE: If you choose to implement your own storage strategy using
@@ -108,6 +108,20 @@ export async function createServer(
     })
   );
 
+  app.get("/api/shop", async (req, res) => {
+    const session = await Shopify.Utils.loadCurrentSession(
+      req,
+      res,
+      app.get("use-online-tokens")
+    );
+    const { Shop } = await import(
+      `@shopify/shopify-api/dist/rest-resources/${Shopify.Context.API_VERSION}/index.js`
+    );
+
+    const shopData = await Shop.all({ session });
+    res.status(200).send(shopData);
+  });
+
   app.get("/api/products/count", async (req, res) => {
     const session = await Shopify.Utils.loadCurrentSession(
       req,
@@ -139,6 +153,20 @@ export async function createServer(
       error = e.message;
     }
     res.status(status).send({ success: status === 200, error });
+  });
+
+  app.get("/api/orders/all", async (req, res) => {
+    const session = await Shopify.Utils.loadCurrentSession(
+      req,
+      res,
+      app.get("use-online-tokens")
+    );
+    const { Order } = await import(
+      `@shopify/shopify-api/dist/rest-resources/${Shopify.Context.API_VERSION}/index.js`
+    );
+
+    const allData = await Order.all({ session: session });
+    res.status(200).send(allData);
   });
 
   // All endpoints after this point will have access to a request.body

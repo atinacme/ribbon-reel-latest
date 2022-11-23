@@ -1,14 +1,21 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import {
   Card, Page, Layout, TextContainer, Link, Heading, Button, Thumbnail, Stack, ButtonGroup, Banner
 } from "@shopify/polaris";
 import { TitleBar } from "@shopify/app-bridge-react";
 import { Mark, Vector1 } from "../assets";
 import { YourInfo, SubscriptionPlan, Style } from '../components';
+import { useAuthenticatedFetch } from '../hooks';
+import { useSelector, useDispatch } from "react-redux";
+import { HomePageAction } from '../redux/Actions';
+import { OnboardingCreateService } from '../services/OnboardingService';
 
 export default function HomePage() {
   const [page, setPage] = useState(1);
   const [freeTrial, setFreeTrail] = useState(false)
+  const state = useSelector((state) => state);
+  const dispatch = useDispatch();
+  const fetch = useAuthenticatedFetch();
   const handleBack = () => {
     if (page === 1) {
       setFreeTrail(false)
@@ -26,6 +33,28 @@ export default function HomePage() {
     } else {
       setPage(4)
     }
+  }
+  useEffect(() => {
+    const ShopData = async () => {
+      fetch("/api/shop")
+        .then((res) => res.json())
+        .then((data) => {
+          dispatch(HomePageAction(data[0].shop_owner, data[0].name, data[0].email, state.homePage.subscription_plan_cost, state.homePage.style_layout))
+        });
+    }
+    ShopData()
+  }, [])
+  const handleSubmitOnboarding = async () => {
+    const data = {
+      merchant_name: state.homePage.store_owner,
+      store_name: state.homePage.store_name,
+      account_email: state.homePage.store_email,
+      layout: state.homePage.style_layout,
+      subscription_plan: state.homePage.subscription_plan_cost
+    }
+    try {
+      await OnboardingCreateService(data)
+    } catch (e) { }
   }
   return (
     <>
@@ -170,7 +199,7 @@ export default function HomePage() {
                             <Stack.Item><Thumbnail size="small" alt="logo" source={Vector1} /></Stack.Item>
                             <h3>Congratulations you finished setting up RibbonReel!</h3>
                             <h4>Your customers can now gift thier firends and family with Reels.</h4>
-                            <Stack.Item><Button>Continue to Site</Button></Stack.Item>
+                            <Stack.Item><Button onClick={handleSubmitOnboarding}>Continue to Site</Button></Stack.Item>
                             <Stack.Item><Thumbnail size="small" alt="logo" source={Mark} />ribbonreel</Stack.Item>
                           </div>
                         </Card>

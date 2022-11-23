@@ -1,10 +1,14 @@
 import React, { useState, useCallback } from 'react'
 import { Card, Layout, DropZone, RadioButton, Thumbnail } from "@shopify/polaris";
 import { Vector } from "../assets";
+import { useSelector, useDispatch } from "react-redux";
+import { HomePageAction } from '../redux/Actions';
 
 export function Style() {
+    const state = useSelector((state) => state);
+    const dispatch = useDispatch();
     const [files, setFiles] = useState([]);
-    const [value, setValue] = useState('disabled');
+    const [value, setValue] = useState('compact');
 
     const handleDropZoneDrop = useCallback(
         (_dropFiles, acceptedFiles, _rejectedFiles) =>
@@ -40,10 +44,11 @@ export function Style() {
         </div>
     );
 
-    const handleChange = useCallback(
-        (_checked, newValue) => setValue(newValue),
-        [],
-    );
+    const handleChange = useCallback((_checked, newValue) => {
+        setValue(newValue);
+        dispatch(HomePageAction(state.homePage.store_owner, state.homePage.store_name, state.homePage.store_email, state.homePage.subscription_plan_cost, newValue));
+    }, []);
+
     return (
         <Layout>
             <Layout.Section>
@@ -61,8 +66,8 @@ export function Style() {
                                 <RadioButton
                                     label="Compact Layout"
                                     helpText="Minimal design to maximize space"
-                                    checked={value === 'disabled'}
-                                    id="disabled"
+                                    checked={value === 'compact'}
+                                    id="compact"
                                     name="compact_layout"
                                     onChange={handleChange}
                                 />
@@ -78,8 +83,8 @@ export function Style() {
                                 <RadioButton
                                     label="Expanded Layout"
                                     helpText="Draw attention to gifting option"
-                                    checked={value === 'disabled'}
-                                    id="disabled"
+                                    checked={value === 'expanded'}
+                                    id="expanded"
                                     name="expanded_layout"
                                     onChange={handleChange}
                                 />
@@ -93,8 +98,8 @@ export function Style() {
                                 <RadioButton
                                     label="Accordion Layout"
                                     helpText="Minimal design to maximize space"
-                                    checked={value === 'disabled'}
-                                    id="disabled"
+                                    checked={value === 'accordion'}
+                                    id="accordion"
                                     name="accordion_layout"
                                     onChange={handleChange}
                                 />
