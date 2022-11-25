@@ -2,14 +2,17 @@ import React, { useState, useCallback } from 'react'
 import { Card, Layout, DropZone, RadioButton, Thumbnail } from "@shopify/polaris";
 import { Vector } from "../assets";
 import { useSelector, useDispatch } from "react-redux";
-import { HomePageAction } from '../redux/Actions';
+import { HomePageAction, SettingsPageAction } from '../redux/Actions';
+import { useLocation } from 'react-router-dom';
 
 export function Style() {
     const state = useSelector((state) => state);
     const dispatch = useDispatch();
+    const location = useLocation();
     const [files, setFiles] = useState([]);
-    const [value, setValue] = useState('compact');
+    const [value, setValue] = useState(location.pathname === "/Settings" ? state.settingsPage.style_layout : 'compact');
 
+    console.log('style--->', location.pathname, value)
     const handleDropZoneDrop = useCallback(
         (_dropFiles, acceptedFiles, _rejectedFiles) =>
             setFiles((files) => [...files, ...acceptedFiles]),
@@ -46,7 +49,11 @@ export function Style() {
 
     const handleChange = useCallback((_checked, newValue) => {
         setValue(newValue);
-        dispatch(HomePageAction(state.homePage.store_owner, state.homePage.store_name, state.homePage.store_email, state.homePage.subscription_plan_cost, newValue));
+        if (location === "/Settings") {
+            dispatch(SettingsPageAction(state.settingsPage.store_owner, state.settingsPage.store_name, state.settingsPage.store_email, state.settingsPage.subscription_plan_cost, newValue, state.settingsPage.notifications));
+        } else {
+            dispatch(HomePageAction(state.homePage.store_owner, state.homePage.store_name, state.homePage.store_email, state.homePage.subscription_plan_cost, newValue));
+        }
     }, []);
 
     return (

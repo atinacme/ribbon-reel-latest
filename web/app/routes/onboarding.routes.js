@@ -9,8 +9,8 @@ module.exports = app => {
     // Retrieve all Onboardings
     router.get("/", onboardings.findAll);
 
-    // Retrieve a single Onboarding with id
-    router.get("/:id", onboardings.findOne);
+    // Update a Tutorial with id
+    router.put("/:store_name", onboardings.update);
 
     app.use('/api/onboardings', router);
 };

@@ -18,7 +18,8 @@ exports.create = (req, res) => {
         store_name: req.body.store_name,
         account_email: req.body.account_email,
         layout: req.body.layout,
-        subscription_plan: req.body.subscription_plan
+        subscription_plan: req.body.subscription_plan,
+        notifications: req.body.notifications
     };
 
     // Save Onboarding in the database
@@ -36,8 +37,8 @@ exports.create = (req, res) => {
 
 // Retrieve all Onboardings from the database.
 exports.findAll = (req, res) => {
-    const merchant_name = req.query.merchant_name;
-    var condition = merchant_name ? { merchant_name: { [Op.iLike]: `%${merchant_name}%` } } : null;
+    const store_name = req.query.store_name;
+    var condition = store_name ? { store_name: { [Op.iLike]: `%${store_name}%` } } : null;
 
     Onboarding.findAll({ where: condition })
         .then(data => {
@@ -51,23 +52,27 @@ exports.findAll = (req, res) => {
         });
 };
 
-// Find a single Onboarding with an id
-exports.findOne = (req, res) => {
-    const store_name = req.query.store_name;
+// Update a Onboarding by the store_name in the request
+exports.update = (req, res) => {
+    const store_name = req.params.store_name;
 
-    Onboarding.findByPk(store_name)
-        .then(data => {
-            if (data) {
-                res.send(data);
+    Onboarding.update(req.body, {
+        where: { store_name: store_name }
+    })
+        .then(num => {
+            if (num == 1) {
+                res.send({
+                    message: "Onboarding was updated successfully."
+                });
             } else {
-                res.status(404).send({
-                    message: `Cannot find Onboarding with store_name=${store_name}.`
+                res.send({
+                    message: `Cannot update Onboarding with store_name=${store_name}. Maybe Onboarding was not found or req.body is empty!`
                 });
             }
         })
         .catch(err => {
             res.status(500).send({
-                message: "Error retrieving Onboarding with store_name=" + store_name
+                message: "Error updating Onboarding with store_name=" + store_name
             });
         });
 };

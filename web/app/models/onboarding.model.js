@@ -14,6 +14,9 @@ module.exports = (sequelize, Sequelize) => {
         },
         subscription_plan: {
             type: Sequelize.STRING
+        },
+        notifications: {
+            type: Sequelize.STRING
         }
     });
 

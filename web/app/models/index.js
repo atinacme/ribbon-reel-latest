@@ -19,5 +19,7 @@ db.Sequelize = Sequelize;
 db.sequelize = sequelize;
 
 db.onboardings = require("./onboarding.model.js")(sequelize, Sequelize);
+db.files = require("./file.model.js")(sequelize, Sequelize);
+db.orders = require("./orders.model.js")(sequelize, Sequelize);
 
 module.exports = db;

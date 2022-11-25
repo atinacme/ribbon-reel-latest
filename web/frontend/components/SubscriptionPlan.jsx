@@ -2,31 +2,46 @@ import React, { useCallback, useState } from 'react'
 import { Card, Layout, TextContainer, Link, Heading, Stack, Badge, List } from "@shopify/polaris";
 import { Tick } from "../assets";
 import { useSelector, useDispatch } from "react-redux";
-import { HomePageAction } from '../redux/Actions';
+import { HomePageAction, SettingsPageAction } from '../redux/Actions';
+import { useLocation } from 'react-router-dom';
 
 export function SubscriptionPlan() {
-    const [basicPlanClass, setBasicPlanClass] = useState('Subcription-card Polaris-Card__Section active')
-    const [proPlanClass, setProPlanClass] = useState('Subcription-card Polaris-Card__Section')
-    const [maxPlanClass, setMaxPlanClass] = useState('Subcription-card Polaris-Card__Section')
     const state = useSelector((state) => state);
     const dispatch = useDispatch();
+    const location = useLocation();
+    const [basicPlanClass, setBasicPlanClass] = useState(location.pathname === "/Settings" ? (state.settingsPage.subscription_plan_cost == 10 ? 'Subcription-card Polaris-Card__Section active' : 'Subcription-card Polaris-Card__Section') : 'Subcription-card Polaris-Card__Section active')
+    const [proPlanClass, setProPlanClass] = useState(location.pathname === "/Settings" ? (state.settingsPage.subscription_plan_cost == 20 ? 'Subcription-card Polaris-Card__Section active' : 'Subcription-card Polaris-Card__Section') : 'Subcription-card Polaris-Card__Section')
+    const [maxPlanClass, setMaxPlanClass] = useState(location.pathname === "/Settings" ? (state.settingsPage.subscription_plan_cost == 30 ? 'Subcription-card Polaris-Card__Section active' : 'Subcription-card Polaris-Card__Section') : 'Subcription-card Polaris-Card__Section')
+
     const handleBasicPlan = useCallback(() => {
         setBasicPlanClass('Subcription-card Polaris-Card__Section active')
         setProPlanClass('Subcription-card Polaris-Card__Section')
         setMaxPlanClass('Subcription-card Polaris-Card__Section')
-        dispatch(HomePageAction(state.homePage.store_owner, state.homePage.store_name, state.homePage.store_email, 10, state.homePage.style_layout));
+        if (location.pathname === "/Settings") {
+            dispatch(SettingsPageAction(state.settingsPage.store_owner, state.settingsPage.store_name, state.settingsPage.store_email, state.settingsPage.subscription_plan_cost, newValue, state.settingsPage.notifications));
+        } else {
+            dispatch(HomePageAction(state.homePage.store_owner, state.homePage.store_name, state.homePage.store_email, 10, state.homePage.style_layout));
+        }
     }, []);
     const handleProPlan = useCallback(() => {
         setBasicPlanClass('Subcription-card Polaris-Card__Section')
         setProPlanClass('Subcription-card Polaris-Card__Section active')
         setMaxPlanClass('Subcription-card Polaris-Card__Section')
-        dispatch(HomePageAction(state.homePage.store_owner, state.homePage.store_name, state.homePage.store_email, 20, state.homePage.style_layout));
+        if (location.pathname === "/Settings") {
+            dispatch(SettingsPageAction(state.settingsPage.store_owner, state.settingsPage.store_name, state.settingsPage.store_email, state.settingsPage.subscription_plan_cost, newValue, state.settingsPage.notifications));
+        } else {
+            dispatch(HomePageAction(state.homePage.store_owner, state.homePage.store_name, state.homePage.store_email, 20, state.homePage.style_layout));
+        }
     }, []);
     const handleMaxPlan = useCallback(() => {
         setBasicPlanClass('Subcription-card Polaris-Card__Section')
         setProPlanClass('Subcription-card Polaris-Card__Section')
         setMaxPlanClass('Subcription-card Polaris-Card__Section active')
-        dispatch(HomePageAction(state.homePage.store_owner, state.homePage.store_name, state.homePage.store_email, 30, state.homePage.style_layout));
+        if (location.pathname === "/Settings") {
+            dispatch(SettingsPageAction(state.settingsPage.store_owner, state.settingsPage.store_name, state.settingsPage.store_email, state.settingsPage.subscription_plan_cost, newValue, state.settingsPage.notifications));
+        } else {
+            dispatch(HomePageAction(state.homePage.store_owner, state.homePage.store_name, state.homePage.store_email, 30, state.homePage.style_layout));
+        }
     }, []);
     return (
         <Layout>
