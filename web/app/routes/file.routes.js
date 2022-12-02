@@ -5,6 +5,8 @@ module.exports = app => {
 
     router.post("/upload", file.upload);
 
+    router.post("/findFile", file.findFile);
+
     router.get("/files", file.getListFiles);
 
     router.get("/files/:name", file.download);

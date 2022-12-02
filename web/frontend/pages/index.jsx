@@ -43,6 +43,14 @@ export default function HomePage() {
         });
     }
     ShopData()
+    const Utils = async () => {
+      fetch("/api/utils")
+        .then((res) => res.json())
+        .then((data) => {
+          console.log("webhook--->", data)
+        });
+    }
+    Utils()
   }, [])
   const handleSubmitOnboarding = async () => {
     const data = {

@@ -11,4 +11,12 @@ const OrderVideoAddService = async (formData) => {
     return await HttpFileRequest("POST", `${baseUrl}/file/upload`, formData);
 };
 
-export { OrderCreateService, OrderVideoAddService }
+const OrderMailService = async (data) => {
+    return await HttpRequest("POST", `${baseUrl}/orders/mail`, data);
+};
+
+const OrderGetFileService = async (data) => {
+    return await HttpRequest("POST", `${baseUrl}/file/findFile`, data);
+};
+
+export { OrderCreateService, OrderVideoAddService, OrderMailService, OrderGetFileService }

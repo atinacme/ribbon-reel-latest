@@ -4,16 +4,15 @@ import {
     useIndexResourceState, Modal, TextContainer, DropZone, List, Thumbnail, Banner, Stack
 } from '@shopify/polaris'
 import {
-    SearchMinor, CalendarMinor, ImportMinor, SortMinor, NoteMinor
+    SearchMinor, CalendarMinor, ImportMinor, SortMinor, NoteMinor, CircleCancelMajor
 } from '@shopify/polaris-icons';
 import { Footer } from '../components';
+import { useSelector } from "react-redux";
 import { useAuthenticatedFetch } from '../hooks';
-import { useSelector, useDispatch } from "react-redux";
-import { OrderVideoAddService } from '../services/OrderService';
+import { OrderCreateService, OrderGetFileService, OrderMailService, OrderVideoAddService } from '../services/OrderService';
 
 export default function ReelOrders() {
     const state = useSelector((state) => state);
-    const dispatch = useDispatch();
     const [textFieldValue, setTextFieldValue] = useState();
     const [{ month, year }, setDate] = useState({ month: 1, year: 2018 });
     const [selectedDates, setSelectedDates] = useState({
@@ -27,14 +26,39 @@ export default function ReelOrders() {
     const [moreFiltersSelected, setMoreFiltersSelected] = useState([]);
     const [moreFiltersPopoverActive, setMoreFiltersPopoverActive] = useState(false);
     const [active, setActive] = useState(false);
-    const [files, setFiles] = useState();
-    const [rejectedFiles, setRejectedFiles] = useState([]);
-    const hasError = rejectedFiles.length > 0;
+    const [orderNumber, setOrderNumber] = useState();
+    const [addedVideo, setAddedVideo] = useState();
     const fetch = useAuthenticatedFetch();
 
     useEffect(() => {
         const handleGetAllOrders = async () => {
-            fetch("/api/orders/all").then((res) => res.json()).then((data) => setCustomers(data));
+            fetch("/api/orders/all").then((res) => res.json()).then((data) => {
+                const lineItems = data.map(itm => itm.line_items.map((itms) => (itms.vendor.indexOf("RIBBON_REELS_CARD") > -1 ? itms.vendor : 0)).indexOf("RIBBON_REELS_CARD") > -1 ? itm : [])
+                const rows = lineItems.map(element => {
+                    if (!Array.isArray(element)) {
+                        return element
+                    }
+                })
+                const rowsArray = rows.filter(item => item !== undefined)
+                setCustomers(rowsArray)
+                const newArr = rowsArray.map(v => ({ ...v, store_owner: state.homePage.store_owner }))
+                OrderCreateService(newArr)
+                const fulfillmentItems = rowsArray.map(itm =>
+                    itm.fulfillments.map((itms) =>
+                        itms.line_items.map((items) =>
+                            items.vendor.indexOf("RIBBON_REELS_CARD") > -1 ? items.vendor : 0).indexOf("RIBBON_REELS_CARD") > -1 ? itms : 0
+                    ))
+                const fulfillmentArray = fulfillmentItems.filter(item => item.length !== 0)
+                fulfillmentArray.map(elements => {
+                    elements.map(element => {
+                        fetch(`/api/fulfillments/${element.order_id}/${element.id}`)
+                            .then((res) => res.json())
+                            .then((data) => {
+                                console.log('ful--->', data)
+                            })
+                    });
+                });
+            });
         };
         handleGetAllOrders();
     }, [])
@@ -91,79 +115,52 @@ export default function ReelOrders() {
     );
 
     const handleChange = useCallback(() => setActive(!active), [active]);
-    const handleDropZoneDrop = useCallback(
-        (_dropFiles, acceptedFiles, _rejectedFiles) =>
-            setFiles(acceptedFiles[0]),
-        [],
-    );
 
-    const validImageTypes = ['video/mp4'];
-
-    const fileUpload = !files && <DropZone.FileUpload />;
-    const uploadedFiles = files && (
-        <div style={{ padding: '0' }}>
-            <Stack vertical>
-                {/* {files.map((file, index) => ( */}
-                <Stack alignment="center">
-                    <Thumbnail
-                        size="small"
-                        alt={files.name}
-                        source={
-                            validImageTypes.includes(files.type)
-                                ? window.URL.createObjectURL(files)
-                                : NoteMinor
-                        }
-                    />
-                    <div>
-                        {files.name}{' '}
-                        <p>
-                            {files.size} bytes
-                        </p>
-                    </div>
-                </Stack>
-                {/* ))} */}
-            </Stack>
-        </div>
-    );
-
-    const handleAddVideo = async (order_number) => {
-        console.log("order---->", order_number)
-        var formData = new FormData();
-        formData.append('order_number', order_number)
-        formData.append('file', files)
+    const handleSendMail = async () => {
+        const data = {
+            mail_to: 'atingupta@acmeintech.in',
+            store_owner: state.homePage.store_owner,
+            order_number: orderNumber
+        }
         try {
-            const result = await OrderVideoAddService(formData)
+            const result = await OrderMailService(data)
             if (result) {
-                setActive(!active)
-                setFiles()
             }
         } catch (e) { }
     };
 
-    const lineItems = customers.map(itm => itm.line_items.map((itms) => (itms.vendor.indexOf("RIBBON_REELS_CARD") > -1 ? itms.vendor : 0)).indexOf("RIBBON_REELS_CARD") > -1 ? itm : [])
-    const rows = lineItems.map(element => {
-        if (!Array.isArray(element)) {
-            return element
-        }
-    })
-    const rowsArray = rows.filter(item => item !== undefined)
+    const handleGetOrderFile = async (order) => {
+        try {
+            const data = {
+                order_number: order
+            }
+            const result = await OrderGetFileService(data)
+            if (result) {
+                setAddedVideo(result[0].filename)
+            }
+        } catch (e) { }
+    }
 
-    const rowMarkup = rowsArray.map((item, index) => (
+    const rowMarkup = customers.map((item, index) => (
         <>
             <IndexTable.Row
                 id={item.id}
                 key={item.id}
                 selected={selectedResources.includes(item.id)}
                 position={index}
-                onClick={handleChange}
+                onClick={() => {
+                    handleChange();
+                    setOrderNumber(item.order_number);
+                    handleGetOrderFile(item.order_number);
+                }}
             >
                 <IndexTable.Cell>{item.name}</IndexTable.Cell>
                 <IndexTable.Cell>{item.created_at}</IndexTable.Cell>
                 <IndexTable.Cell>{item.customer > 0 ? item.customer.default_address.company : ''}</IndexTable.Cell>
                 <IndexTable.Cell>{item.total_price}</IndexTable.Cell>
-                {/* <IndexTable.Cell>{reelRevenue}</IndexTable.Cell> */}
+                <IndexTable.Cell>{item.line_items[0].price}</IndexTable.Cell>
+                <IndexTable.Cell>{item.source_name}</IndexTable.Cell>
                 <IndexTable.Cell>{item.fulfillments.length > 0 ? item.fulfillments[0].shipment_status : ''}</IndexTable.Cell>
-                {/* <IndexTable.Cell>{reelStatus}</IndexTable.Cell> */}
                 <IndexTable.Cell>{item.line_items.length}</IndexTable.Cell>
             </IndexTable.Row>
         </>
@@ -298,14 +295,13 @@ export default function ReelOrders() {
                 </IndexTable>
             </Card>
             <Modal
-                // activator={ModalActivator}
                 open={active}
                 onClose={handleChange}
                 title="Reach more shoppers with Instagram product tags"
-                primaryAction={{
+                primaryAction={!addedVideo ? {
                     content: 'Add Instagram',
-                    onAction: handleAddVideo,
-                }}
+                    onAction: handleSendMail,
+                } : null}
                 secondaryActions={[
                     {
                         content: 'Cancel',
@@ -316,10 +312,12 @@ export default function ReelOrders() {
                 <Modal.Section>
                     <TextContainer>
                         <Stack vertical>
-                            <DropZone allowMultiple={false} onDrop={handleDropZoneDrop}>
-                                {uploadedFiles}
-                                {fileUpload}
-                            </DropZone>
+
+                            {addedVideo ?
+                                <p>Customer has added the Video Message</p>
+                                :
+                                <p>Send Mail to this Customer for Video Message</p>
+                            }
                         </Stack>
                     </TextContainer>
                 </Modal.Section>

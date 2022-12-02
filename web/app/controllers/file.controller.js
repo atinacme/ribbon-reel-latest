@@ -2,7 +2,8 @@ const uploadFile = require("../middleware/upload");
 const db = require("../models");
 const fs = require('fs');
 const File = db.files;
-const baseUrl = 'http://localhost:8080/api/orders/files/';
+const Op = db.Sequelize.Op;
+const baseUrl = 'http://localhost:8080/api/file/files/';
 
 const upload = async (req, res) => {
     try {
@@ -39,9 +40,25 @@ const upload = async (req, res) => {
     }
 };
 
+// Retrieve all Files of Particular Order Number from the database.
+const findFile = (req, res) => {
+    const order_number = req.body.order_number;
+    var condition = order_number ? { order_number: { [Op.iLike]: `%${order_number}%` } } : null;
+
+    File.findAll({ where: condition })
+        .then(data => {
+            res.send(data);
+        })
+        .catch(err => {
+            res.status(500).send({
+                message:
+                    err.message || "Some error occurred while retrieving file."
+            });
+        });
+};
+
 const getListFiles = (req, res) => {
     const directoryPath = __basedir + "/resources/static/assets/uploads/";
-
     fs.readdir(directoryPath, function (err, files) {
         if (err) {
             res.status(500).send({
@@ -77,6 +94,7 @@ const download = (req, res) => {
 
 module.exports = {
     upload,
+    findFile,
     getListFiles,
     download,
 };

@@ -3,7 +3,13 @@ module.exports = (sequelize, Sequelize) => {
         store_name: {
             type: Sequelize.STRING
         },
-        order_name: {
+        store_owner: {
+            type: Sequelize.STRING
+        },
+        contact_email: {
+            type: Sequelize.STRING
+        },
+        order_number: {
             type: Sequelize.STRING
         },
         date: {

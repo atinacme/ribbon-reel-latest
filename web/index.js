@@ -4,7 +4,6 @@ import { readFileSync } from "fs";
 import express from "express";
 import cookieParser from "cookie-parser";
 import { Shopify, LATEST_API_VERSION } from "@shopify/shopify-api";
-
 import applyAuthMiddleware from "./middleware/auth.js";
 import verifyRequest from "./middleware/verify-request.js";
 import { setupGDPRWebHooks } from "./gdpr.js";
@@ -12,6 +11,7 @@ import productCreator from "./helpers/product-creator.js";
 import redirectToAuth from "./helpers/redirect-to-auth.js";
 import { BillingInterval } from "./helpers/ensure-billing.js";
 import { AppInstallations } from "./app_installations.js";
+import axios from "axios";
 
 const USE_ONLINE_TOKENS = false;
 
@@ -50,6 +50,20 @@ Shopify.Webhooks.Registry.addHandler("APP_UNINSTALLED", {
   },
 });
 
+Shopify.Webhooks.Registry.addHandler("PRODUCTS_CREATE", {
+  path: "/api/webhooks",
+  webhookHandler: async (_topic, shop, _body) => {
+    console.log('webhook fired for product creation--->')
+  },
+});
+
+Shopify.Webhooks.Registry.addHandler("ORDERS_UPDATED", {
+  path: "/api/webhooks",
+  webhookHandler: async (_topic, shop, _body) => {
+    console.log('webhook fired for order updation--->')
+  },
+});
+
 // The transactions with Shopify will always be marked as test transactions, unless NODE_ENV is production.
 // See the ensureBilling helper to learn more about billing in this template.
 const BILLING_SETTINGS = {
@@ -76,6 +90,7 @@ export async function createServer(
   billingSettings = BILLING_SETTINGS
 ) {
   const app = express();
+  const session = [];
 
   app.set("use-online-tokens", USE_ONLINE_TOKENS);
   app.use(cookieParser(Shopify.Context.API_SECRET_KEY));
@@ -88,10 +103,86 @@ export async function createServer(
   // Shopify.Webhooks.Registry.process().
   // See https://github.com/Shopify/shopify-api-node/blob/main/docs/usage/webhooks.md#note-regarding-use-of-body-parsers
   // for more details.
-  app.post("/api/webhooks", async (req, res) => {
+  app.get("/api/utils", async (req, res) => {
     try {
+      const currentSession = await Shopify.Utils.loadCurrentSession(
+        req,
+        res,
+        app.get("use-online-tokens")
+      );
+      session.push(currentSession);
+      res.status(200).send(currentSession);
+      // register product creation webhook
+      const webhookProductCreate = await Shopify.Webhooks.Registry.register({
+        shop: currentSession?.shop,
+        accessToken: currentSession?.accessToken,
+        topic: "PRODUCTS_CREATE",
+        path: "/api/webhooks",
+      });
+
+      if (!webhookProductCreate["PRODUCTS_CREATE"].success) {
+        console.log(
+          `Failed to register PRODUCTS_CREATE webhook: ${webhookProductCreate.result}`
+        );
+      }
+      console.log("webhookProductCreate---->", webhookProductCreate)
+
+      // register order updation webhook
+      const webhookOrderUpdate = await Shopify.Webhooks.Registry.register({
+        shop: currentSession?.shop,
+        accessToken: currentSession?.accessToken,
+        topic: "ORDERS_UPDATED",
+        path: "/api/webhooks",
+      });
+
+      console.log("webhookOrderUpdate---->", webhookOrderUpdate)
+
+      if (!webhookOrderUpdate["ORDERS_UPDATED"].success) {
+        console.log(
+          `Failed to register ORDERS_UPDATED webhook: ${webhookOrderUpdate.result}`
+        );
+      }
+    } catch (e) {
+      console.log(`Failed to get utils: ${e.message}`);
+    }
+  });
+
+  app.post("/api/webhooks", async (req, res) => {
+    console.log('new--->', session)
+    try {
+      const { Order } = await import(
+        `@shopify/shopify-api/dist/rest-resources/${Shopify.Context.API_VERSION}/index.js`
+      );
       await Shopify.Webhooks.Registry.process(req, res);
-      console.log(`Webhook processed, returned status code 200`);
+      console.log(`Webhook processed, returned status code 200`, req.header('x-shopify-topic'), req.header('x-shopify-order-id'));
+      if (req.header('x-shopify-topic') == 'orders/updated') {
+        const orderData = await Order.find({
+          session: session[0],
+          id: req.header('x-shopify-order-id'),
+        })
+        if (orderData) {
+          const lineItems = orderData.line_items.map((itms) => (
+            itms.vendor.indexOf("RIBBON_REELS_CARD") > -1));
+          const array = lineItems.includes(true)
+          if (array) {
+            const { Shop } = await import(
+              `@shopify/shopify-api/dist/rest-resources/${Shopify.Context.API_VERSION}/index.js`
+            );
+            const shopData = await Shop.all({ session: session[0] });
+            axios.post('http://localhost:8080/api/orders/mail', {
+              mail_to: orderData.customer.email,
+              store_owner: shopData[0].store_owner,
+              order_number: orderData.order_number
+            })
+              .then(function (response) {
+                console.log('order in---->', response.data);
+              })
+              .catch(function (error) {
+                console.log(error);
+              });
+          }
+        }
+      }
     } catch (e) {
       console.log(`Failed to process webhook: ${e.message}`);
       if (!res.headersSent) {
@@ -167,6 +258,23 @@ export async function createServer(
 
     const allData = await Order.all({ session: session });
     res.status(200).send(allData);
+  });
+
+  app.get("/api/fulfillments/:order_id/:fulfillment_id", async (req, res) => {
+    const session = await Shopify.Utils.loadCurrentSession(
+      req,
+      res,
+      app.get("use-online-tokens")
+    );
+    const { FulfillmentEvent } = await import(
+      `@shopify/shopify-api/dist/rest-resources/${Shopify.Context.API_VERSION}/index.js`
+    );
+    const shopData = await FulfillmentEvent.all({
+      session: session,
+      order_id: req.params.order_id,
+      fulfillment_id: req.params.fulfillment_id,
+    });
+    res.status(200).send(shopData);
   });
 
   // All endpoints after this point will have access to a request.body
