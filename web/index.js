@@ -12,6 +12,8 @@ import redirectToAuth from "./helpers/redirect-to-auth.js";
 import { BillingInterval } from "./helpers/ensure-billing.js";
 import { AppInstallations } from "./app_installations.js";
 import axios from "axios";
+import moment from 'moment';
+import cron from 'node-cron';
 
 const USE_ONLINE_TOKENS = false;
 
@@ -53,14 +55,21 @@ Shopify.Webhooks.Registry.addHandler("APP_UNINSTALLED", {
 Shopify.Webhooks.Registry.addHandler("PRODUCTS_CREATE", {
   path: "/api/webhooks",
   webhookHandler: async (_topic, shop, _body) => {
-    console.log('webhook fired for product creation--->')
+    console.log('webhook fired for product creation--->');
   },
 });
 
-Shopify.Webhooks.Registry.addHandler("ORDERS_UPDATED", {
-  path: "/api/webhooks",
+Shopify.Webhooks.Registry.addHandler("ORDERS_CREATE", {
+  path: "/api/webhooks/orders_create",
   webhookHandler: async (_topic, shop, _body) => {
-    console.log('webhook fired for order updation--->')
+    console.log('webhook fired for order updation--->');
+  },
+});
+
+Shopify.Webhooks.Registry.addHandler("FULFILLMENTS_CREATE", {
+  path: "/api/webhooks/fulfillment_events_create",
+  webhookHandler: async (_topic, shop, _body) => {
+    console.log('webhook fired for fulfillment events creation--->');
   },
 });
 
@@ -82,7 +91,6 @@ const BILLING_SETTINGS = {
 // More details can be found on shopify.dev:
 // https://shopify.dev/apps/webhooks/configuration/mandatory-webhooks
 setupGDPRWebHooks("/api/webhooks");
-
 // export for test use only
 export async function createServer(
   root = process.cwd(),
@@ -125,21 +133,37 @@ export async function createServer(
           `Failed to register PRODUCTS_CREATE webhook: ${webhookProductCreate.result}`
         );
       }
-      console.log("webhookProductCreate---->", webhookProductCreate)
+      console.log("webhookProductCreate---->", webhookProductCreate);
 
       // register order updation webhook
-      const webhookOrderUpdate = await Shopify.Webhooks.Registry.register({
+      const webhookOrderCreate = await Shopify.Webhooks.Registry.register({
         shop: currentSession?.shop,
         accessToken: currentSession?.accessToken,
-        topic: "ORDERS_UPDATED",
-        path: "/api/webhooks",
+        topic: "ORDERS_CREATE",
+        path: "/api/webhooks/orders_create",
       });
 
-      console.log("webhookOrderUpdate---->", webhookOrderUpdate)
+      console.log("webhookOrderCreate---->", webhookOrderCreate);
 
-      if (!webhookOrderUpdate["ORDERS_UPDATED"].success) {
+      // register fulfillment event creation webhook
+      const webhookFulfillmentEventCreate = await Shopify.Webhooks.Registry.register({
+        shop: currentSession?.shop,
+        accessToken: currentSession?.accessToken,
+        topic: "FULFILLMENTS_CREATE",
+        path: "/api/webhooks/fulfillment_events_create",
+      });
+
+      console.log("webhookFulfillmentEventCreate---->", webhookFulfillmentEventCreate);
+
+      if (!webhookOrderCreate["ORDERS_CREATE"].success) {
         console.log(
-          `Failed to register ORDERS_UPDATED webhook: ${webhookOrderUpdate.result}`
+          `Failed to register ORDERS_CREATE webhook: ${webhookOrderCreate.result}`
+        );
+      }
+
+      if (!webhookFulfillmentEventCreate["FULFILLMENTS_CREATE"].success) {
+        console.log(
+          `Failed to register FULFILLMENTS_CREATE webhook: ${webhookFulfillmentEventCreate.result}`
         );
       }
     } catch (e) {
@@ -147,42 +171,133 @@ export async function createServer(
     }
   });
 
-  app.post("/api/webhooks", async (req, res) => {
-    console.log('new--->', session)
+  app.post("/api/webhooks/orders_create", async (req, res) => {
     try {
       const { Order } = await import(
         `@shopify/shopify-api/dist/rest-resources/${Shopify.Context.API_VERSION}/index.js`
       );
       await Shopify.Webhooks.Registry.process(req, res);
-      console.log(`Webhook processed, returned status code 200`, req.header('x-shopify-topic'), req.header('x-shopify-order-id'));
-      if (req.header('x-shopify-topic') == 'orders/updated') {
-        const orderData = await Order.find({
-          session: session[0],
-          id: req.header('x-shopify-order-id'),
-        })
-        if (orderData) {
-          const lineItems = orderData.line_items.map((itms) => (
-            itms.vendor.indexOf("RIBBON_REELS_CARD") > -1));
-          const array = lineItems.includes(true)
-          if (array) {
+      const orderData = await Order.find({
+        session: session[0],
+        id: req.header('x-shopify-order-id'),
+      });
+      if (orderData) {
+        const lineItems = orderData.line_items.map((itms) => (
+          itms.vendor.indexOf("RIBBON_REELS_CARD") > -1));
+        const array = lineItems.includes(true);
+        if (array) {
+          const { Shop } = await import(
+            `@shopify/shopify-api/dist/rest-resources/${Shopify.Context.API_VERSION}/index.js`
+          );
+          const shopData = await Shop.all({ session: session[0] });
+          axios.post('http://localhost:8080/api/orders/mail', {
+            mail_to: orderData.customer.email,
+            store_owner: shopData[0].store_owner,
+            order_number: orderData.order_number
+          })
+            .then(function (response) {
+              console.log('order in---->', response.data);
+            })
+            .catch(function (error) {
+              console.log(error);
+            });
+        }
+      }
+    } catch (e) {
+      console.log(`Failed to process webhook: ${e.message}`);
+      if (!res.headersSent) {
+        res.status(500).send(e.message);
+      }
+    }
+  });
+
+  app.post("/api/webhooks/fulfillment_events_create", async (req, res) => {
+    console.log('new--->', session);
+    try {
+      const { Order, Fulfillment, FulfillmentEvent } = await import(
+        `@shopify/shopify-api/dist/rest-resources/${Shopify.Context.API_VERSION}/index.js`
+      );
+      await Shopify.Webhooks.Registry.process(req, res);
+      const orderData = await Order.find({
+        session: session[0],
+        id: req.header('x-shopify-order-id'),
+      });
+      const orderArray = [orderData];
+      const lineItems = orderArray.map(itm => itm.line_items.map((itms) => (itms.vendor.indexOf("RIBBON_REELS_CARD") > -1 ? itms.vendor : 0)).indexOf("RIBBON_REELS_CARD") > -1 ? itm : []);
+      const rows = lineItems.map(element => {
+        if (!Array.isArray(element)) {
+          return element;
+        }
+      });
+      const rowsArray = rows.filter(item => item !== undefined);
+      const fulfillmentItems = rowsArray.map(itm =>
+        itm.fulfillments.map((itms) =>
+          itms.line_items.map((items) =>
+            items.vendor.indexOf("RIBBON_REELS_CARD") > -1 ? items.vendor : 0).indexOf("RIBBON_REELS_CARD") > -1 ? itms : 0
+        ));
+      const fulfillmentArray = fulfillmentItems.filter(item => item.length !== 0);
+      fulfillmentArray.map(elements => {
+        elements.map(async element => {
+          const fulfillmentData = await Fulfillment.find({
+            session: session[0],
+            order_id: element.order_id,
+            id: element.id,
+          });
+          if (fulfillmentData) {
             const { Shop } = await import(
               `@shopify/shopify-api/dist/rest-resources/${Shopify.Context.API_VERSION}/index.js`
             );
-            const shopData = await Shop.all({ session: session[0] });
-            axios.post('http://localhost:8080/api/orders/mail', {
-              mail_to: orderData.customer.email,
-              store_owner: shopData[0].store_owner,
-              order_number: orderData.order_number
-            })
-              .then(function (response) {
-                console.log('order in---->', response.data);
-              })
-              .catch(function (error) {
-                console.log(error);
+            const fulfillmentEventData = await FulfillmentEvent.all({
+              session: session[0],
+              order_id: fulfillmentData.order_id,
+              fulfillment_id: fulfillmentData.id,
+            });
+            console.log("fulfillmentArray--->", fulfillmentEventData);
+            if (fulfillmentEventData) {
+              const fulfillmentParticularEventData = fulfillmentEventData.map(async (item) => {
+                return await FulfillmentEvent.find({
+                  session: session[0],
+                  order_id: item.order_id,
+                  fulfillment_id: item.fulfillment_id,
+                  id: item.id,
+                });
               });
+              if (fulfillmentParticularEventData) {
+                if (fulfillmentParticularEventData.fulfillment_event.status === "out_for_delivery") {
+                  const shopData = await Shop.all({ session: session[0] });
+                  axios.post('http://localhost:8080/api/orders/mail', {
+                    mail_to: orderData.customer.email,
+                    store_owner: shopData[0].store_owner,
+                    order_number: orderData.order_number
+                  })
+                    .then(async function (response) {
+                      console.log('fulfillment in---->', response.data);
+                    })
+                    .catch(function (error) {
+                      console.log(error);
+                    });
+                }
+                var estimatedDate = new Date(moment(fulfillmentParticularEventData.fulfillment_event.estimated_delivery_at).format('MM/DD/YYYY'));
+                var estimatedDays = Math.round(((estimatedDate.getTime()) / (1000 * 3600 * 60 * 60 * 24))).toFixed(0);
+                cron.schedule(`0 0 ${estimatedDays} * *`, async () => {
+                  const shopData = await Shop.all({ session: session[0] });
+                  axios.post('http://localhost:8080/api/orders/mail', {
+                    mail_to: orderData.customer.email,
+                    store_owner: shopData[0].store_owner,
+                    order_number: orderData.order_number
+                  })
+                    .then(async function (response) {
+                      console.log('fulfillment in---->', response.data);
+                    })
+                    .catch(function (error) {
+                      console.log(error);
+                    });
+                });
+              }
+            }
           }
-        }
-      }
+        });
+      });
     } catch (e) {
       console.log(`Failed to process webhook: ${e.message}`);
       if (!res.headersSent) {
@@ -258,23 +373,6 @@ export async function createServer(
 
     const allData = await Order.all({ session: session });
     res.status(200).send(allData);
-  });
-
-  app.get("/api/fulfillments/:order_id/:fulfillment_id", async (req, res) => {
-    const session = await Shopify.Utils.loadCurrentSession(
-      req,
-      res,
-      app.get("use-online-tokens")
-    );
-    const { FulfillmentEvent } = await import(
-      `@shopify/shopify-api/dist/rest-resources/${Shopify.Context.API_VERSION}/index.js`
-    );
-    const shopData = await FulfillmentEvent.all({
-      session: session,
-      order_id: req.params.order_id,
-      fulfillment_id: req.params.fulfillment_id,
-    });
-    res.status(200).send(shopData);
   });
 
   // All endpoints after this point will have access to a request.body

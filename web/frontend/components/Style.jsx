@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from 'react'
+import React, { useState, useCallback } from 'react';
 import { Card, Layout, DropZone, RadioButton, Thumbnail } from "@shopify/polaris";
 import { Vector } from "../assets";
 import { useSelector, useDispatch } from "react-redux";
@@ -12,7 +12,6 @@ export function Style() {
     const [files, setFiles] = useState([]);
     const [value, setValue] = useState(location.pathname === "/Settings" ? state.settingsPage.style_layout : 'compact');
 
-    console.log('style--->', location.pathname, value)
     const handleDropZoneDrop = useCallback(
         (_dropFiles, acceptedFiles, _rejectedFiles) =>
             setFiles((files) => [...files, ...acceptedFiles]),
@@ -116,5 +115,5 @@ export function Style() {
                 </div>
             </Layout.Section>
         </Layout>
-    )
+    );
 }

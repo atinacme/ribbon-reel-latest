@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from 'react'
+import React, { useState, useCallback, useEffect } from 'react';
 import {
     Card, Page, Layout, Select, Button, Stack, DataTable, Heading, TextContainer, Thumbnail
 } from "@shopify/polaris";
@@ -7,10 +7,35 @@ import { Mark, chat, RibbonReel_BrandElements, Imageshoe, arrow, MerchantDashboa
 import Chart from 'chart.js/auto';
 import { Bar } from 'react-chartjs-2';
 import { Footer } from '../components';
+import { OrderGetService } from '../services/OrderService';
 
 export default function Overview() {
     const [selected, setSelected] = useState('today');
     const [accountSetUp, setAccountSetUp] = useState(false);
+    const [giftRevenue, setGiftRevenue] = useState();
+    const [giftCustomer, setGiftCustomer] = useState();
+    const [giftOrder, setGiftOrder] = useState();
+
+    useEffect(() => {
+        const handleGetAllOrders = async () => {
+            const result = await OrderGetService();
+            if (result) {
+                var sum = 0;
+                var cust;
+                var customer = [];
+                result.forEach(element => {
+                    sum += parseInt(element.reel_revenue);
+                    customer.push(element.customer);
+                    let findDuplicates = arr => arr.filter((item, index) => arr.indexOf(item) != index);
+                    cust = [...new Set(findDuplicates(customer))].length;
+                });
+                setGiftRevenue(sum);
+                setGiftCustomer(cust);
+                setGiftOrder(result.length);
+            }
+        };
+        handleGetAllOrders();
+    }, []);
 
     const handleSelectChange = useCallback((value) => setSelected(value), []);
 
@@ -32,7 +57,7 @@ export default function Overview() {
                 data: [65, 59, 80, 81, 56]
             }
         ]
-    }
+    };
 
     const rows = [
         ['Emerald Silk Gown', '$875.00', 124689, 140, '$122,500.00'],
@@ -78,7 +103,7 @@ export default function Overview() {
                                     <Card sectioned>
                                         <div style={{ display: 'block', alignItems: 'center' }}>
                                             <h2>Total Gift Revenue</h2>
-                                            <h4>$9,475.31</h4>
+                                            <h4>${giftRevenue}</h4>
                                             <Stack.Item>
                                                 <div className='arrow-wrap'> <img src={arrow} />3%</div>
                                                 <TextContainer>+$39.8 this week</TextContainer>
@@ -89,7 +114,7 @@ export default function Overview() {
                                     <Card sectioned>
                                         <div style={{ display: 'block', alignItems: 'center' }}>
                                             <h2>Total Gifting Customers</h2>
-                                            <h4>345</h4>
+                                            <h4>{giftCustomer}</h4>
                                             <Stack.Item>
                                                 <div className='arrow-wrap'> <img src={arrow} />3%</div>
                                                 <TextContainer>+$39.8 this week</TextContainer>
@@ -99,7 +124,7 @@ export default function Overview() {
                                     <Card sectioned>
                                         <div style={{ display: 'block', alignItems: 'center' }}>
                                             <h2>Total Reel Orders</h2>
-                                            <h4>3,169</h4>
+                                            <h4>{giftOrder}</h4>
                                             <Stack.Item>
                                                 <div className='arrow-wrap'> <img src={arrow} />3%</div>
                                                 <TextContainer>+$39.8 this week</TextContainer>
@@ -235,5 +260,5 @@ export default function Overview() {
             }
             <Footer />
         </div>
-    )
+    );
 }

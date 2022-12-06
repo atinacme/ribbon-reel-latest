@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect } from 'react';
 import {
   Card, Page, Layout, TextContainer, Link, Heading, Button, Thumbnail, Stack, ButtonGroup, Banner
 } from "@shopify/polaris";
@@ -12,46 +12,44 @@ import { OnboardingCreateService } from '../services/OnboardingService';
 
 export default function HomePage() {
   const [page, setPage] = useState(1);
-  const [freeTrial, setFreeTrail] = useState(false)
+  const [freeTrial, setFreeTrail] = useState(false);
   const state = useSelector((state) => state);
   const dispatch = useDispatch();
   const fetch = useAuthenticatedFetch();
   const handleBack = () => {
     if (page === 1) {
-      setFreeTrail(false)
+      setFreeTrail(false);
     } else if (page === 2) {
-      setPage(1)
+      setPage(1);
     } else {
-      setPage(2)
+      setPage(2);
     }
-  }
+  };
   const handleNext = () => {
     if (page === 1) {
-      setPage(2)
+      setPage(2);
     } else if (page === 2) {
-      setPage(3)
+      setPage(3);
     } else {
-      setPage(4)
+      setPage(4);
     }
-  }
+  };
   useEffect(() => {
     const ShopData = async () => {
       fetch("/api/shop")
         .then((res) => res.json())
         .then((data) => {
-          dispatch(HomePageAction(data[0].shop_owner, data[0].name, data[0].email, state.homePage.subscription_plan_cost, state.homePage.style_layout))
+          dispatch(HomePageAction(data[0].shop_owner, data[0].name, data[0].email, state.homePage.subscription_plan_cost, state.homePage.style_layout));
         });
-    }
-    ShopData()
+    };
+    ShopData();
     const Utils = async () => {
       fetch("/api/utils")
         .then((res) => res.json())
-        .then((data) => {
-          console.log("webhook--->", data)
-        });
-    }
-    Utils()
-  }, [])
+        .then((data) => { });
+    };
+    Utils();
+  }, []);
   const handleSubmitOnboarding = async () => {
     const data = {
       merchant_name: state.homePage.store_owner,
@@ -59,11 +57,11 @@ export default function HomePage() {
       account_email: state.homePage.store_email,
       layout: state.homePage.style_layout,
       subscription_plan: state.homePage.subscription_plan_cost
-    }
+    };
     try {
-      await OnboardingCreateService(data)
+      await OnboardingCreateService(data);
     } catch (e) { }
-  }
+  };
   return (
     <>
       {!freeTrial ?

@@ -5,6 +5,8 @@ module.exports = app => {
 
     router.post("/create", order.create);
 
+    router.get("/findAll", order.findAll);
+
     router.post("/mail", order.mail);
 
     app.use('/api/orders', router);

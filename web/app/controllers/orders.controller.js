@@ -19,7 +19,6 @@ exports.create = (req, res) => {
         truncate: false
     });
     req.body.forEach(element => {
-        console.log('date---->', ((Math.round(new Date().getTime() - new Date(element.created_at).getTime())) / (1000 * 3600 * 24)).toFixed(0))
         const order = {
             store_name: element.session.shop,
             store_owner: element.store_owner,
@@ -34,8 +33,8 @@ exports.create = (req, res) => {
             items: element.line_items.length
         };
         // Save Order in the database
-        orders = Order.create(order)
-    })
+        orders = Order.create(order);
+    });
 
     orders.then(data => {
         res.send('All Orders Inserted and Updated');
@@ -44,6 +43,19 @@ exports.create = (req, res) => {
             res.status(500).send({
                 message:
                     err.message || "Some error occurred while creating the Order."
+            });
+        });
+};
+
+exports.findAll = (req, res) => {
+    Order.findAll()
+        .then(data => {
+            res.send(data);
+        })
+        .catch(err => {
+            res.status(500).send({
+                message:
+                    err.message || "Some error occurred while retrieving orders."
             });
         });
 };
@@ -59,6 +71,6 @@ exports.mail = (req, res) => {
 
     transporter.sendMail(mailConfigurations, function (error, info) {
         if (error) throw Error(error);
-        res.send(info)
+        res.send(info);
     });
-}
+};
