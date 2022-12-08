@@ -1,23 +1,19 @@
 import React, { useState, useCallback, useEffect } from 'react';
 import {
-    Heading, TextField, Icon, DatePicker, Button, Popover, OptionList, Pagination, IndexTable, Card,
-    useIndexResourceState, Modal, TextContainer, DropZone, List, Thumbnail, Banner, Stack
+    Heading, Button, IndexTable, Card, Modal, TextContainer, Stack
 } from '@shopify/polaris';
-import {
-    SearchMinor, CalendarMinor, ImportMinor, SortMinor, NoteMinor, CircleCancelMajor
-} from '@shopify/polaris-icons';
 import { Footer } from '../components';
-import { useSelector } from "react-redux";
 import moment from 'moment';
 import { useAuthenticatedFetch } from '../hooks';
-import { OrderCreateService, OrderGetFileService, OrderMailService, OrderVideoAddService } from '../services/OrderService';
+import { OrderCreateService } from '../services/OrderService';
 
 export default function ReelOrders() {
-    const state = useSelector((state) => state);
     const [customers, setCustomers] = useState([]);
     const [active, setActive] = useState(false);
     const [orderNumber, setOrderNumber] = useState();
+    const [orderId, setOrderId] = useState();
     const [addedVideo, setAddedVideo] = useState();
+    const [orderData, setOrderData] = useState();
     const resourceName = {
         singular: 'customer',
         plural: 'customers',
@@ -25,6 +21,15 @@ export default function ReelOrders() {
     const fetch = useAuthenticatedFetch();
 
     useEffect(() => {
+        var shop;
+        const ShopData = async () => {
+            fetch("/api/shop")
+                .then((res) => res.json())
+                .then((data) => {
+                    shop = data[0].shop_owner;
+                });
+        };
+        ShopData();
         const handleGetAllOrders = async () => {
             fetch("/api/orders/all").then((res) => res.json()).then((data) => {
                 const lineItems = data.map(itm => itm.line_items.map((itms) => (itms.vendor.indexOf("RIBBON_REELS_CARD") > -1 ? itms.vendor : 0)).indexOf("RIBBON_REELS_CARD") > -1 ? itm : []);
@@ -35,7 +40,10 @@ export default function ReelOrders() {
                 });
                 const rowsArray = rows.filter(item => item !== undefined);
                 setCustomers(rowsArray);
-                const newArr = rowsArray.map(v => ({ ...v, store_owner: state.homePage.store_owner }));
+                const newArr = rowsArray.map(v => ({
+                    ...v, store_owner: shop,
+                    reel_revenue: v.line_items[0].price
+                }));
                 OrderCreateService(newArr);
             });
         };
@@ -44,43 +52,9 @@ export default function ReelOrders() {
 
     const handleChange = useCallback(() => setActive(!active), [active]);
 
-    const handleSendMail = async () => {
-        const data = {
-            mail_to: 'atingupta@acmeintech.in',
-            store_owner: state.homePage.store_owner,
-            order_number: orderNumber
-        };
-        try {
-            const result = await OrderMailService(data);
-            if (result) {
-            }
-        } catch (e) { }
-    };
-
-    const handleGetOrderFile = async (order) => {
-        try {
-            const data = {
-                order_number: order
-            };
-            const result = await OrderGetFileService(data);
-            if (result) {
-                setAddedVideo(result[0].filename);
-            }
-        } catch (e) { }
-    };
-
-    const rowMarkup = customers.map((item, index) => (
-        <>
-            <IndexTable.Row
-                id={item.id}
-                key={item.id}
-                position={index}
-                onClick={() => {
-                    handleChange();
-                    setOrderNumber(item.order_number);
-                    handleGetOrderFile(item.order_number);
-                }}
-            >
+    const rowMarkup = customers.map(
+        (item, index) => (
+            <IndexTable.Row id={item.id} key={item.id} position={index}>
                 <IndexTable.Cell>{item.name}</IndexTable.Cell>
                 <IndexTable.Cell>{moment(item.created_at).format('MM/DD/YYYY')}</IndexTable.Cell>
                 <IndexTable.Cell>{item.customer.first_name + " " + item.customer.last_name}</IndexTable.Cell>
@@ -88,9 +62,20 @@ export default function ReelOrders() {
                 <IndexTable.Cell>{item.line_items[0].price}</IndexTable.Cell>
                 <IndexTable.Cell>{item.source_name}</IndexTable.Cell>
                 <IndexTable.Cell>{item.line_items.length}</IndexTable.Cell>
+                <IndexTable.Cell>
+                    <Button onClick={async () => {
+                        setOrderData();
+                        setActive(!active);
+                        setOrderId(item.id);
+                        setOrderNumber(item.order_number);
+                        fetch(`/api/order/${item.id}`).then((res) => res.json()).then((data) => {
+                            setOrderData(data);
+                        });
+                    }}>View</Button>
+                </IndexTable.Cell>
             </IndexTable.Row>
-        </>
-    ));
+        ),
+    );
 
     return (
         <div className='order-wrapper'>
@@ -106,7 +91,8 @@ export default function ReelOrders() {
                         { title: 'Total' },
                         { title: 'Reel Revenue' },
                         { title: 'Shipping Status' },
-                        { title: 'Items' }
+                        { title: 'Items' },
+                        { title: 'Details' }
                     ]}
                     selectable={false}
                 >
@@ -116,14 +102,10 @@ export default function ReelOrders() {
             <Modal
                 open={active}
                 onClose={handleChange}
-                title="Reach more shoppers with Instagram product tags"
-                primaryAction={!addedVideo ? {
-                    content: 'Add Instagram',
-                    onAction: handleSendMail,
-                } : null}
+                title={`Details of Order with Id ${orderId}`}
                 secondaryActions={[
                     {
-                        content: 'Cancel',
+                        content: 'Close',
                         onAction: handleChange,
                     },
                 ]}
@@ -131,12 +113,51 @@ export default function ReelOrders() {
                 <Modal.Section>
                     <TextContainer>
                         <Stack vertical>
-
-                            {addedVideo ?
-                                <p>Customer has added the Video Message</p>
-                                :
-                                <p>Send Mail to this Customer for Video Message</p>
-                            }
+                            <div className='heading-wrap'>
+                                <Heading variant="headingMd" as="h2">
+                                    Order Details
+                                </Heading>
+                            </div>
+                            {orderData && (
+                                <div className='shipping-list'>
+                                    <ul>
+                                        <li>Order Number: <span>{orderData.name}</span></li>
+                                        <li>Total Price: <span>{orderData.subtotal_price}</span></li>
+                                        <li>Currency:  <span>{orderData.currency}</span></li>
+                                    </ul>
+                                </div>
+                            )}
+                            <div className='heading-wrap'>
+                                <Heading variant="headingMd" as="h2">
+                                    Shipping Address
+                                </Heading>
+                            </div>
+                            {orderData && (
+                                <div className='shipping-list'>
+                                    <ul>
+                                        <li>Name: <span>{orderData.shipping_address?.name}</span></li>
+                                        <li>Company: <span>{orderData.shipping_address?.company}</span></li>
+                                        <li>Country:  <span>{orderData.shipping_address?.country}</span></li>
+                                        <li>Country Code: <span>{orderData.shipping_address?.country_code}</span></li>
+                                        <li>Phone: <span>{orderData.shipping_address?.phone} </span></li>
+                                        <li>Province: <span>{orderData.shipping_address?.province} </span></li>
+                                    </ul>
+                                </div>
+                            )}
+                            <div className='heading-wrap'>
+                                <Heading variant="headingMd" as="h2">
+                                    Customer Details
+                                </Heading>
+                            </div>
+                            {orderData && (
+                                <div className='shipping-list'>
+                                    <ul>
+                                        <li>Name: <span>{orderData.customer.first_name + " " + orderData.customer.last_name}</span></li>
+                                        <li>Email: <span>{orderData.customer.email}</span></li>
+                                        <li>Phone: <span>{orderData.customer.phone}</span></li>
+                                    </ul>
+                                </div>
+                            )}
                         </Stack>
                     </TextContainer>
                 </Modal.Section>

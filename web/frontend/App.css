@@ -854,6 +854,20 @@ span.month-detail {
     padding-bottom: 10px;
 }
 
+.heading-wrap {
+    border-bottom: 1px solid #bfbbbb;
+    padding-bottom: 13px;
+}
+
+.shipping-list ul {
+    list-style-type: none;
+    padding-left: 0;
+}
+
+.shipping-list ul {
+    column-count: 2;
+}
+
 @media (max-width: 1024px) {
     .Subcription-card {
         flex-wrap: wrap;

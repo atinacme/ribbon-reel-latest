@@ -375,6 +375,20 @@ export async function createServer(
     res.status(200).send(allData);
   });
 
+  app.get("/api/order/:id", async (req, res) => {
+    const session = await Shopify.Utils.loadCurrentSession(
+      req,
+      res,
+      app.get("use-online-tokens")
+    );
+    const { Order } = await import(
+      `@shopify/shopify-api/dist/rest-resources/${Shopify.Context.API_VERSION}/index.js`
+    );
+
+    const allData = await Order.find({ session: session, id: req.params.id });
+    res.status(200).send(allData);
+  });
+
   // All endpoints after this point will have access to a request.body
   // attribute, as a result of the express.json() middleware
   app.use(express.json());
