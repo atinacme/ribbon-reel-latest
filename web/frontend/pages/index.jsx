@@ -13,6 +13,8 @@ import { OnboardingCreateService } from '../services/OnboardingService';
 export default function HomePage() {
   const [page, setPage] = useState(1);
   const [freeTrial, setFreeTrail] = useState(false);
+  const [progressBarStep1, setProgressBarStep1] = useState();
+  const [progressBarStep2, setProgressBarStep2] = useState();
   const state = useSelector((state) => state);
   const dispatch = useDispatch();
   const fetch = useAuthenticatedFetch();
@@ -28,8 +30,10 @@ export default function HomePage() {
   const handleNext = () => {
     if (page === 1) {
       setPage(2);
+      setProgressBarStep1("progress-bar");
     } else if (page === 2) {
       setPage(3);
+      setProgressBarStep2("progress-bar");
     } else {
       setPage(4);
     }
@@ -174,13 +178,13 @@ export default function HomePage() {
                     <div className='progress-wrap'>
                       <span>1</span>
                       <div className="progress">
-                        <div className="progress-bar" role="progressbar" style={{ width: '100%' }} aria-valuenow="100" aria-valuemin="0" aria-valuemax="100"></div>
+                        <div className={progressBarStep1} role="progressbar" style={{ width: '100%' }} aria-valuenow="100" aria-valuemin="0" aria-valuemax="100"></div>
                       </div>
                     </div>
                     <div className='progress-wrap'>
                       <span>2</span>
                       <div className="progress">
-                        <div className="progress-bar" role="progressbar" style={{ width: '100%' }} aria-valuenow="100" aria-valuemin="0" aria-valuemax="100"></div>
+                        <div className={progressBarStep2} role="progressbar" style={{ width: '100%' }} aria-valuenow="100" aria-valuemin="0" aria-valuemax="100"></div>
                       </div>
                     </div>
                     <div className='progress-wrap'>
