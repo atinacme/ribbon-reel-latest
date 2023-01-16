@@ -10,9 +10,9 @@ import { OrderCreateService } from '../services/OrderService';
 export default function ReelOrders() {
     const [customers, setCustomers] = useState([]);
     const [active, setActive] = useState(false);
-    const [orderNumber, setOrderNumber] = useState();
+    // const [orderNumber, setOrderNumber] = useState();
     const [orderId, setOrderId] = useState();
-    const [addedVideo, setAddedVideo] = useState();
+    // const [addedVideo, setAddedVideo] = useState();
     const [orderData, setOrderData] = useState();
     const resourceName = {
         singular: 'customer',
@@ -67,7 +67,7 @@ export default function ReelOrders() {
                         setOrderData();
                         setActive(!active);
                         setOrderId(item.id);
-                        setOrderNumber(item.order_number);
+                        // setOrderNumber(item.order_number);
                         fetch(`/api/order/${item.id}`).then((res) => res.json()).then((data) => {
                             setOrderData(data);
                         });

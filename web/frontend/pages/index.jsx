@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import {
   Card, Page, Layout, TextContainer, Link, Heading, Button, Thumbnail, Stack, ButtonGroup, Banner
 } from "@shopify/polaris";
-import { TitleBar } from "@shopify/app-bridge-react";
+import { TitleBar, useNavigate } from "@shopify/app-bridge-react";
 import { Mark, Vector1 } from "../assets";
 import { YourInfo, SubscriptionPlan, Style } from '../components';
 import { useAuthenticatedFetch } from '../hooks';
@@ -18,6 +18,8 @@ export default function HomePage() {
   const state = useSelector((state) => state);
   const dispatch = useDispatch();
   const fetch = useAuthenticatedFetch();
+  const navigate = useNavigate();
+
   const handleBack = () => {
     if (page === 1) {
       setFreeTrail(false);
@@ -63,7 +65,10 @@ export default function HomePage() {
       subscription_plan: state.homePage.subscription_plan_cost
     };
     try {
-      await OnboardingCreateService(data);
+      const result = await OnboardingCreateService(data);
+      if (result) {
+        navigate('/ReelOrders');
+      }
     } catch (e) { }
   };
   return (

@@ -1,18 +1,18 @@
-import React, { useState, useCallback, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
-    Card, Page, Layout, Select, Button, Stack, IndexTable, Heading, TextContainer, Thumbnail
+    Card, Page, Layout, Button, Stack, IndexTable, Heading, TextContainer, Thumbnail
 } from "@shopify/polaris";
 import { ChatMajor } from '@shopify/polaris-icons';
 import { Mark, chat, RibbonReel_BrandElements, Imageshoe, arrow, MerchantDashboard } from "../assets";
-import Chart from 'chart.js/auto';
-import { Bar } from 'react-chartjs-2';
+// import Chart from 'chart.js/auto';
+// import { Bar } from 'react-chartjs-2';
 import { Footer } from '../components';
 import { OrderGetService } from '../services/OrderService';
 import { useAuthenticatedFetch } from '../hooks';
 import { useNavigate } from '@shopify/app-bridge-react';
 
 export default function Overview() {
-    const [selected, setSelected] = useState('today');
+    // const [selected, setSelected] = useState('today');
     const [accountSetUp, setAccountSetUp] = useState(false);
     const [giftRevenue, setGiftRevenue] = useState();
     const [giftCustomer, setGiftCustomer] = useState();

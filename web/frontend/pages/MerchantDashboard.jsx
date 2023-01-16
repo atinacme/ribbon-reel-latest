@@ -1,11 +1,9 @@
-import React, { useState, useCallback, useEffect } from 'react'
+import React, { useState, useCallback } from 'react';
 import {
-    Card, Page, Layout, Select, Button, Stack, DataTable, Heading, Badge, List, TextContainer, Link,
-    DropZone, Thumbnail, Caption, RadioButton, ProgressBar
+    Card, Page, Layout, Select, Button, Stack, DataTable, Heading, TextContainer, Thumbnail
 } from "@shopify/polaris";
 import { ChatMajor } from '@shopify/polaris-icons';
-import { TitleBar, useNavigate } from "@shopify/app-bridge-react";
-import { Mark, chat, MerchantDashboard, RibbonReel_BrandElements, Imageshoe, arrow } from "../assets";
+import { Mark, chat, RibbonReel_BrandElements, Imageshoe, arrow } from "../assets";
 import Chart from 'chart.js/auto';
 import { Bar } from 'react-chartjs-2';
 
@@ -32,7 +30,7 @@ export default function MerchantDashboardPage() {
                 data: [65, 59, 80, 81, 56]
             }
         ]
-    }
+    };
 
     const rows = [
         ['Emerald Silk Gown', '$875.00', 124689, 140, '$122,500.00'],
@@ -229,5 +227,5 @@ export default function MerchantDashboardPage() {
                 </div>
             </Page>
         </div>
-    )
+    );
 }
