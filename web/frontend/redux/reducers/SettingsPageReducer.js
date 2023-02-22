@@ -6,7 +6,9 @@ const initialState = {
     store_email: '',
     subscription_plan_cost: '',
     style_layout: '',
-    notifications: ''
+    marketing_notifications: undefined,
+    order_notifications: undefined,
+    update_notifications: undefined
 };
 
 export function SettingsPageReducer(state = initialState, action) {
@@ -19,7 +21,9 @@ export function SettingsPageReducer(state = initialState, action) {
                 store_email: action.store_email,
                 subscription_plan_cost: action.subscription_plan_cost,
                 style_layout: action.style_layout,
-                notifications: action.notifications
+                marketing_notifications: action.marketing_notifications,
+                order_notifications: action.order_notifications,
+                update_notifications: action.update_notifications
             };
         default:
             return state;

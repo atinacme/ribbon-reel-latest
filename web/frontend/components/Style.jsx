@@ -48,8 +48,8 @@ export function Style() {
 
     const handleChange = useCallback((_checked, newValue) => {
         setValue(newValue);
-        if (location === "/Settings") {
-            dispatch(SettingsPageAction(state.settingsPage.store_owner, state.settingsPage.store_name, state.settingsPage.store_email, state.settingsPage.subscription_plan_cost, newValue, state.settingsPage.notifications));
+        if (location.pathname === "/Settings") {
+            dispatch(SettingsPageAction(state.settingsPage.store_owner, state.settingsPage.store_name, state.settingsPage.store_email, state.settingsPage.subscription_plan_cost, newValue, state.settingsPage.marketing_notifications, state.settingsPage.order_notifications, state.settingsPage.update_notifications));
         } else {
             dispatch(HomePageAction(state.homePage.store_owner, state.homePage.store_name, state.homePage.store_email, state.homePage.subscription_plan_cost, newValue));
         }

@@ -22,32 +22,36 @@ export default function ReelOrders() {
 
     useEffect(() => {
         var shop;
-        const ShopData = async () => {
-            fetch("/api/shop")
-                .then((res) => res.json())
-                .then((data) => {
-                    shop = data[0].shop_owner;
+        try {
+            const ShopData = async () => {
+                fetch("/api/shop")
+                    .then((res) => res.json())
+                    .then((data) => {
+                        shop = data[0].shop_owner;
+                    });
+            };
+            ShopData();
+        } catch (e) { }
+        try {
+            const handleGetAllOrders = async () => {
+                fetch("/api/orders/all").then((res) => res.json()).then((data) => {
+                    const lineItems = data.map(itm => itm.line_items.map((itms) => (itms.vendor.indexOf("RIBBON_REELS_CARD") > -1 ? itms.vendor : 0)).indexOf("RIBBON_REELS_CARD") > -1 ? itm : []);
+                    const rows = lineItems.map(element => {
+                        if (!Array.isArray(element)) {
+                            return element;
+                        }
+                    });
+                    const rowsArray = rows.filter(item => item !== undefined);
+                    setCustomers(rowsArray);
+                    const newArr = rowsArray.map(v => ({
+                        ...v, store_owner: shop,
+                        reel_revenue: v.line_items[0].price
+                    }));
+                    OrderCreateService(newArr);
                 });
-        };
-        ShopData();
-        const handleGetAllOrders = async () => {
-            fetch("/api/orders/all").then((res) => res.json()).then((data) => {
-                const lineItems = data.map(itm => itm.line_items.map((itms) => (itms.vendor.indexOf("RIBBON_REELS_CARD") > -1 ? itms.vendor : 0)).indexOf("RIBBON_REELS_CARD") > -1 ? itm : []);
-                const rows = lineItems.map(element => {
-                    if (!Array.isArray(element)) {
-                        return element;
-                    }
-                });
-                const rowsArray = rows.filter(item => item !== undefined);
-                setCustomers(rowsArray);
-                const newArr = rowsArray.map(v => ({
-                    ...v, store_owner: shop,
-                    reel_revenue: v.line_items[0].price
-                }));
-                OrderCreateService(newArr);
-            });
-        };
-        handleGetAllOrders();
+            };
+            handleGetAllOrders();
+        } catch (e) { }
     }, []);
 
     const handleChange = useCallback(() => setActive(!active), [active]);

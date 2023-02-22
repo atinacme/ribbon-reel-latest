@@ -23,7 +23,8 @@ const PORT = parseInt(process.env.BACKEND_PORT || process.env.PORT, 10);
 const DEV_INDEX_PATH = `${process.cwd()}/frontend/`;
 const PROD_INDEX_PATH = `${process.cwd()}/frontend/dist/`;
 
-const DB_PATH = `${process.cwd()}/database.sqlite`;
+// const DB_PATH = `${process.cwd()}/database.sqlite`;
+const DB_PATH = `postgresql://postgres:12345@localhost:5432/postgres`;
 
 Shopify.Context.initialize({
   API_KEY: process.env.SHOPIFY_API_KEY,
@@ -35,7 +36,7 @@ Shopify.Context.initialize({
   IS_EMBEDDED_APP: true,
   // This should be replaced with your preferred storage strategy
   // See note below regarding using CustomSessionStorage with this template.
-  SESSION_STORAGE: new Shopify.Session.SQLiteSessionStorage(DB_PATH),
+  SESSION_STORAGE: new Shopify.Session.PostgreSQLSessionStorage(DB_PATH),
   ...(process.env.SHOP_CUSTOM_DOMAIN && { CUSTOM_SHOP_DOMAINS: [process.env.SHOP_CUSTOM_DOMAIN] }),
 });
 

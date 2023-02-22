@@ -1,4 +1,4 @@
-import React from 'react'
+import React from 'react';
 import { Card, Layout, TextField } from "@shopify/polaris";
 import { useSelector, useDispatch } from "react-redux";
 import { HomePageAction, SettingsPageAction } from '../redux/Actions';
@@ -27,7 +27,7 @@ export function YourInfo() {
                                 value={location.pathname === "/Settings" ? state.settingsPage.store_email : state.homePage.store_email}
                                 onChange={(e) => {
                                     if (location.pathname === "/Settings") {
-                                        dispatch(SettingsPageAction(state.settingsPage.store_owner, state.settingsPage.store_name, e, state.settingsPage.subscription_plan_cost, state.settingsPage.style_layout, state.settingsPage.notifications));
+                                        dispatch(SettingsPageAction(state.settingsPage.store_owner, state.settingsPage.store_name, e, state.settingsPage.subscription_plan_cost, state.settingsPage.style_layout, state.settingsPage.marketing_notifications, state.settingsPage.order_notifications, state.settingsPage.update_notifications));
                                     } else {
                                         dispatch(HomePageAction(state.homePage.store_owner, state.homePage.store_name, e, state.homePage.subscription_plan_cost, state.homePage.style_layout));
                                     }
@@ -40,5 +40,5 @@ export function YourInfo() {
                 </div>
             </Layout.Section>
         </Layout>
-    )
+    );
 }

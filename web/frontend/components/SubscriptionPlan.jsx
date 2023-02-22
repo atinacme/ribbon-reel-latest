@@ -1,4 +1,4 @@
-import React, { useCallback, useState } from 'react'
+import React, { useCallback, useState } from 'react';
 import { Card, Layout, TextContainer, Link, Heading, Stack, Badge, List } from "@shopify/polaris";
 import { Tick } from "../assets";
 import { useSelector, useDispatch } from "react-redux";
@@ -9,36 +9,36 @@ export function SubscriptionPlan() {
     const state = useSelector((state) => state);
     const dispatch = useDispatch();
     const location = useLocation();
-    const [basicPlanClass, setBasicPlanClass] = useState(location.pathname === "/Settings" ? (state.settingsPage.subscription_plan_cost == 10 ? 'Subcription-card Polaris-Card__Section active' : 'Subcription-card Polaris-Card__Section') : 'Subcription-card Polaris-Card__Section active')
-    const [proPlanClass, setProPlanClass] = useState(location.pathname === "/Settings" ? (state.settingsPage.subscription_plan_cost == 20 ? 'Subcription-card Polaris-Card__Section active' : 'Subcription-card Polaris-Card__Section') : 'Subcription-card Polaris-Card__Section')
-    const [maxPlanClass, setMaxPlanClass] = useState(location.pathname === "/Settings" ? (state.settingsPage.subscription_plan_cost == 30 ? 'Subcription-card Polaris-Card__Section active' : 'Subcription-card Polaris-Card__Section') : 'Subcription-card Polaris-Card__Section')
+    const [basicPlanClass, setBasicPlanClass] = useState(location.pathname === "/Settings" ? (state.settingsPage.subscription_plan_cost == 10 ? 'Subcription-card Polaris-Card__Section active' : 'Subcription-card Polaris-Card__Section') : 'Subcription-card Polaris-Card__Section active');
+    const [proPlanClass, setProPlanClass] = useState(location.pathname === "/Settings" ? (state.settingsPage.subscription_plan_cost == 20 ? 'Subcription-card Polaris-Card__Section active' : 'Subcription-card Polaris-Card__Section') : 'Subcription-card Polaris-Card__Section');
+    const [maxPlanClass, setMaxPlanClass] = useState(location.pathname === "/Settings" ? (state.settingsPage.subscription_plan_cost == 30 ? 'Subcription-card Polaris-Card__Section active' : 'Subcription-card Polaris-Card__Section') : 'Subcription-card Polaris-Card__Section');
 
-    const handleBasicPlan = useCallback(() => {
-        setBasicPlanClass('Subcription-card Polaris-Card__Section active')
-        setProPlanClass('Subcription-card Polaris-Card__Section')
-        setMaxPlanClass('Subcription-card Polaris-Card__Section')
+    const handleBasicPlan = useCallback((newValue) => {
+        setBasicPlanClass('Subcription-card Polaris-Card__Section active');
+        setProPlanClass('Subcription-card Polaris-Card__Section');
+        setMaxPlanClass('Subcription-card Polaris-Card__Section');
         if (location.pathname === "/Settings") {
-            dispatch(SettingsPageAction(state.settingsPage.store_owner, state.settingsPage.store_name, state.settingsPage.store_email, state.settingsPage.subscription_plan_cost, newValue, state.settingsPage.notifications));
+            dispatch(SettingsPageAction(state.settingsPage.store_owner, state.settingsPage.store_name, state.settingsPage.store_email, 10, state.settingsPage.style_layout, state.settingsPage.marketing_notifications, state.settingsPage.order_notifications, state.settingsPage.update_notifications));
         } else {
             dispatch(HomePageAction(state.homePage.store_owner, state.homePage.store_name, state.homePage.store_email, 10, state.homePage.style_layout));
         }
     }, []);
-    const handleProPlan = useCallback(() => {
-        setBasicPlanClass('Subcription-card Polaris-Card__Section')
-        setProPlanClass('Subcription-card Polaris-Card__Section active')
-        setMaxPlanClass('Subcription-card Polaris-Card__Section')
+    const handleProPlan = useCallback((newValue) => {
+        setBasicPlanClass('Subcription-card Polaris-Card__Section');
+        setProPlanClass('Subcription-card Polaris-Card__Section active');
+        setMaxPlanClass('Subcription-card Polaris-Card__Section');
         if (location.pathname === "/Settings") {
-            dispatch(SettingsPageAction(state.settingsPage.store_owner, state.settingsPage.store_name, state.settingsPage.store_email, state.settingsPage.subscription_plan_cost, newValue, state.settingsPage.notifications));
+            dispatch(SettingsPageAction(state.settingsPage.store_owner, state.settingsPage.store_name, state.settingsPage.store_email, 20, state.settingsPage.style_layout, state.settingsPage.marketing_notifications, state.settingsPage.order_notifications, state.settingsPage.update_notifications));
         } else {
             dispatch(HomePageAction(state.homePage.store_owner, state.homePage.store_name, state.homePage.store_email, 20, state.homePage.style_layout));
         }
     }, []);
-    const handleMaxPlan = useCallback(() => {
-        setBasicPlanClass('Subcription-card Polaris-Card__Section')
-        setProPlanClass('Subcription-card Polaris-Card__Section')
-        setMaxPlanClass('Subcription-card Polaris-Card__Section active')
+    const handleMaxPlan = useCallback((newValue) => {
+        setBasicPlanClass('Subcription-card Polaris-Card__Section');
+        setProPlanClass('Subcription-card Polaris-Card__Section');
+        setMaxPlanClass('Subcription-card Polaris-Card__Section active');
         if (location.pathname === "/Settings") {
-            dispatch(SettingsPageAction(state.settingsPage.store_owner, state.settingsPage.store_name, state.settingsPage.store_email, state.settingsPage.subscription_plan_cost, newValue, state.settingsPage.notifications));
+            dispatch(SettingsPageAction(state.settingsPage.store_owner, state.settingsPage.store_name, state.settingsPage.store_email, 30, state.settingsPage.style_layout, state.settingsPage.marketing_notifications, state.settingsPage.order_notifications, state.settingsPage.update_notifications));
         } else {
             dispatch(HomePageAction(state.homePage.store_owner, state.homePage.store_name, state.homePage.store_email, 30, state.homePage.style_layout));
         }
@@ -173,5 +173,5 @@ export function SubscriptionPlan() {
                 <TextContainer>Subscription will be monthly and payment method can be managed thru you <Link>shopify account</Link></TextContainer>
             </Card>
         </Layout>
-    )
+    );
 }

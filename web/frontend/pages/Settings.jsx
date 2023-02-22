@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useEffect } from 'react'
+import React, { useState, useCallback, useEffect } from 'react';
 import { Tabs, Button, ButtonGroup } from "@shopify/polaris";
 import { useSelector, useDispatch } from "react-redux";
 import { Footer, Notifications, Style, SubscriptionPlan, YourInfo } from '../components';
@@ -12,14 +12,18 @@ export default function Settings() {
 
     const handleSettingsOnboarding = async () => {
         try {
-            const data = await OnboardingGetParticularService(state.homePage.store_name)
-            dispatch(SettingsPageAction(data[0].merchant_name, data[0].store_name, data[0].account_email, data[0].subscription_plan, data[0].layout, data[0].notifications));
+            const data = await OnboardingGetParticularService(state.homePage.store_name);
+            dispatch(SettingsPageAction(data[0].merchant_name, data[0].store_name, data[0].account_email, data[0].subscription_plan, data[0].layout,
+                data[0].marketing_notifications == "true" ? true : false,
+                data[0].order_notifications == "true" ? true : false,
+                data[0].update_notifications == "true" ? true : false
+            ));
         } catch (e) { }
-    }
+    };
 
     useEffect(() => {
-        handleSettingsOnboarding()
-    }, [])
+        handleSettingsOnboarding();
+    }, []);
 
     const handleTabChange = useCallback(
         (selectedTabIndex) => setSelected(selectedTabIndex),
@@ -51,19 +55,22 @@ export default function Settings() {
     ];
 
     const handleSaveSettings = async () => {
-        const data = {
-            account_email: state.settingsPage.store_email,
-            layout: state.settingsPage.style_layout,
-            subscription_plan: state.settingsPage.subscription_plan_cost,
-            notifications: state.settingsPage.notifications
-        }
         try {
-            const result = await OnboardingUpdateParticularService(state.settingsPage.store_name, data)
+            const data = {
+                account_email: state.settingsPage.store_email,
+                layout: state.settingsPage.style_layout,
+                subscription_plan: state.settingsPage.subscription_plan_cost,
+                marketing_notifications: state.settingsPage.marketing_notifications,
+                order_notifications: state.settingsPage.order_notifications,
+                update_notifications: state.settingsPage.update_notifications
+            };
+            console.log('cbhd---->', data);
+            const result = await OnboardingUpdateParticularService(state.settingsPage.store_name, data);
             if (result) {
-                handleSettingsOnboarding()
+                handleSettingsOnboarding();
             }
         } catch (e) { }
-    }
+    };
     return (
         <>
             <card className="settingWrapper">
@@ -89,5 +96,5 @@ export default function Settings() {
                 <Footer />
             </card>
         </>
-    )
+    );
 }
