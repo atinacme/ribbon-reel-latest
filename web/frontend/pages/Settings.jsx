@@ -1,5 +1,5 @@
 import React, { useState, useCallback, useEffect } from 'react';
-import { Tabs, Button, ButtonGroup } from "@shopify/polaris";
+import { Tabs, Button, ButtonGroup, Card } from "@shopify/polaris";
 import { useSelector, useDispatch } from "react-redux";
 import { Footer, Notifications, Style, SubscriptionPlan, YourInfo } from '../components';
 import { OnboardingGetParticularService, OnboardingUpdateParticularService } from '../services/OnboardingService';
@@ -72,8 +72,8 @@ export default function Settings() {
         } catch (e) { }
     };
     return (
-        <>
-            <card className="settingWrapper">
+        <div className="settingWrapper">
+            <Card>
                 <Tabs className="tabsWrap" tabs={tabs} selected={selected} onSelect={handleTabChange}>
                     <div className='settingwrap'>
                         <div className='ctaWrap'>
@@ -94,7 +94,7 @@ export default function Settings() {
                     </div>
                 </Tabs>
                 <Footer />
-            </card>
-        </>
+            </Card>
+        </div>
     );
 }

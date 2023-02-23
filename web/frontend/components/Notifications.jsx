@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from 'react';
+import React from 'react';
 import { Card, TextContainer, Checkbox } from '@shopify/polaris';
 import { useSelector, useDispatch } from "react-redux";
 import { SettingsPageAction } from '../redux/Actions';
@@ -6,24 +6,15 @@ import { SettingsPageAction } from '../redux/Actions';
 export function Notifications() {
     const state = useSelector((state) => state);
     const dispatch = useDispatch();
-    const [marketingChecked, setMarketingChecked] = useState(state.settingsPage.marketing_notifications);
-    const [orderChecked, setOrderChecked] = useState(state.settingsPage.order_notifications);
-    const [updateChecked, setUpdateChecked] = useState(state.settingsPage.update_notifications);
-    const handleChangeMarketing = useCallback((newChecked) => {
-        console.log("market---->", newChecked);
-        setMarketingChecked(newChecked);
+    const handleChangeMarketing = (newChecked) => {
         dispatch(SettingsPageAction(state.settingsPage.store_owner, state.settingsPage.store_name, state.settingsPage.store_email, state.settingsPage.subscription_plan_cost, state.settingsPage.style_layout, newChecked, state.settingsPage.order_notifications, state.settingsPage.update_notifications));
-    }, []);
-    const handleChangeOrder = useCallback((newChecked) => {
-        console.log("order---->", newChecked);
-        setOrderChecked(newChecked);
+    };
+    const handleChangeOrder = (newChecked) => {
         dispatch(SettingsPageAction(state.settingsPage.store_owner, state.settingsPage.store_name, state.settingsPage.store_email, state.settingsPage.subscription_plan_cost, state.settingsPage.style_layout, state.settingsPage.marketing_notifications, newChecked, state.settingsPage.update_notifications));
-    }, []);
-    const handleChangeUpdate = useCallback((newChecked) => {
-        console.log("update---->", newChecked);
-        setUpdateChecked(newChecked);
+    };
+    const handleChangeUpdate = (newChecked) => {
         dispatch(SettingsPageAction(state.settingsPage.store_owner, state.settingsPage.store_name, state.settingsPage.store_email, state.settingsPage.subscription_plan_cost, state.settingsPage.style_layout, state.settingsPage.marketing_notifications, state.settingsPage.order_notifications, newChecked));
-    }, []);
+    };
     return (
         <div>
             <Card sectioned title="Notifications Settings">
@@ -31,7 +22,7 @@ export function Notifications() {
                 <Card.Section>
                     <Checkbox
                         label="Marketing Newsletter"
-                        checked={marketingChecked}
+                        checked={state.settingsPage.marketing_notifications}
                         onChange={handleChangeMarketing}
                     />
                     <TextContainer>
@@ -41,7 +32,7 @@ export function Notifications() {
                 <Card.Section>
                     <Checkbox
                         label="Order Updates"
-                        checked={orderChecked}
+                        checked={state.settingsPage.order_notifications}
                         onChange={handleChangeOrder}
                     />
                     <TextContainer>
@@ -51,7 +42,7 @@ export function Notifications() {
                 <Card.Section>
                     <Checkbox
                         label="Update Reminders"
-                        checked={updateChecked}
+                        checked={state.settingsPage.update_notifications}
                         onChange={handleChangeUpdate}
                     />
                     <TextContainer>

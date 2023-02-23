@@ -63,7 +63,7 @@ Shopify.Webhooks.Registry.addHandler("PRODUCTS_CREATE", {
 Shopify.Webhooks.Registry.addHandler("ORDERS_CREATE", {
   path: "/api/webhooks/orders_create",
   webhookHandler: async (_topic, shop, _body) => {
-    console.log('webhook fired for order updation--->');
+    console.log('webhook fired for order creation--->');
   },
 });
 

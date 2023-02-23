@@ -27,33 +27,37 @@ export default function Overview() {
 
     useEffect(() => {
         const handleGiftData = async () => {
-            const result = await OrderGetService();
-            if (result) {
-                var sum = 0;
-                var cust;
-                var customer = [];
-                result.forEach(element => {
-                    sum += parseInt(element.reel_revenue);
-                    customer.push(element.customer);
-                    let findDuplicates = arr => arr.filter((item, index) => arr.indexOf(item) != index);
-                    cust = [...new Set(findDuplicates(customer))].length;
-                });
-                setGiftRevenue(sum);
-                setGiftCustomer(cust);
-                setGiftOrder(result.length);
-            }
+            try {
+                const result = await OrderGetService();
+                if (result) {
+                    var sum = 0;
+                    var cust;
+                    var customer = [];
+                    result.forEach(element => {
+                        sum += parseInt(element.reel_revenue);
+                        customer.push(element.customer);
+                        let findDuplicates = arr => arr.filter((item, index) => arr.indexOf(item) != index);
+                        cust = [...new Set(findDuplicates(customer))].length;
+                    });
+                    setGiftRevenue(sum);
+                    setGiftCustomer(cust);
+                    setGiftOrder(result.length);
+                }
+            } catch (e) { }
         };
-        const handleGetAllOrders = async () => {
-            fetch("/api/orders/all").then((res) => res.json()).then((data) => {
-                const lineItems = data.map(itm => itm.line_items.map((itms) => (itms.vendor.indexOf("RIBBON_REELS_CARD") > -1 ? itms.vendor : 0)).indexOf("RIBBON_REELS_CARD") > -1 ? itm : []);
-                const rows = lineItems.map(element => {
-                    if (!Array.isArray(element)) {
-                        return element;
-                    }
+        const handleGetAllOrders = () => {
+            try {
+                fetch("/api/orders/all").then((res) => res.json()).then((data) => {
+                    const lineItems = data.map(itm => itm.line_items.map((itms) => (itms.vendor.indexOf("RIBBON_REELS_CARD") > -1 ? itms.vendor : 0)).indexOf("RIBBON_REELS_CARD") > -1 ? itm : []);
+                    const rows = lineItems.map(element => {
+                        if (!Array.isArray(element)) {
+                            return element;
+                        }
+                    });
+                    const rowsArray = rows.filter(item => item !== undefined);
+                    setRecentOrder(rowsArray);
                 });
-                const rowsArray = rows.filter(item => item !== undefined);
-                setRecentOrder(rowsArray);
-            });
+            } catch (e) { }
         };
         handleGiftData();
         handleGetAllOrders();

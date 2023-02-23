@@ -9,7 +9,7 @@ import {
 } from "./components";
 import './node_modules/bootstrap/dist/css/bootstrap.min.css';
 import { Provider } from "react-redux";
-import store from "./store";
+import PersistedStore from "./redux/PersistedStore";
 
 export default function App() {
   // Any .tsx or .jsx files in /pages will become a route
@@ -17,7 +17,7 @@ export default function App() {
   const pages = import.meta.globEager("./pages/**/!(*.test.[jt]sx)*.([jt]sx)");
 
   return (
-    <Provider store={store}>
+    <Provider store={PersistedStore.getDefaultStore().store}>
       <PolarisProvider>
         <BrowserRouter>
           <AppBridgeProvider>
