@@ -56,7 +56,7 @@ Shopify.Webhooks.Registry.addHandler("APP_UNINSTALLED", {
 Shopify.Webhooks.Registry.addHandler("PRODUCTS_CREATE", {
   path: "/api/webhooks",
   webhookHandler: async (_topic, shop, _body) => {
-    console.log('webhook fired for product creation--->');
+    // console.log('webhook fired for product creation--->');
   },
 });
 
@@ -70,7 +70,7 @@ Shopify.Webhooks.Registry.addHandler("ORDERS_CREATE", {
 Shopify.Webhooks.Registry.addHandler("FULFILLMENTS_CREATE", {
   path: "/api/webhooks/fulfillment_events_create",
   webhookHandler: async (_topic, shop, _body) => {
-    console.log('webhook fired for fulfillment events creation--->');
+    // console.log('webhook fired for fulfillment events creation--->');
   },
 });
 
@@ -130,11 +130,11 @@ export async function createServer(
       });
 
       if (!webhookProductCreate["PRODUCTS_CREATE"].success) {
-        console.log(
-          `Failed to register PRODUCTS_CREATE webhook: ${webhookProductCreate.result}`
-        );
+        // console.log(
+        //   `Failed to register PRODUCTS_CREATE webhook: ${webhookProductCreate.result}`
+        // );
       }
-      console.log("webhookProductCreate---->", webhookProductCreate);
+      // console.log("webhookProductCreate---->", webhookProductCreate);
 
       // register order updation webhook
       const webhookOrderCreate = await Shopify.Webhooks.Registry.register({
@@ -154,7 +154,7 @@ export async function createServer(
         path: "/api/webhooks/fulfillment_events_create",
       });
 
-      console.log("webhookFulfillmentEventCreate---->", webhookFulfillmentEventCreate);
+      // console.log("webhookFulfillmentEventCreate---->", webhookFulfillmentEventCreate);
 
       if (!webhookOrderCreate["ORDERS_CREATE"].success) {
         console.log(
@@ -163,12 +163,12 @@ export async function createServer(
       }
 
       if (!webhookFulfillmentEventCreate["FULFILLMENTS_CREATE"].success) {
-        console.log(
-          `Failed to register FULFILLMENTS_CREATE webhook: ${webhookFulfillmentEventCreate.result}`
-        );
+        // console.log(
+        //   `Failed to register FULFILLMENTS_CREATE webhook: ${webhookFulfillmentEventCreate.result}`
+        // );
       }
     } catch (e) {
-      console.log(`Failed to get utils: ${e.message}`);
+      // console.log(`Failed to get utils: ${e.message}`);
     }
   });
 
@@ -191,16 +191,36 @@ export async function createServer(
             `@shopify/shopify-api/dist/rest-resources/${Shopify.Context.API_VERSION}/index.js`
           );
           const shopData = await Shop.all({ session: session[0] });
-          axios.post('http://localhost:8080/api/orders/mail', {
-            mail_to: orderData.customer.email,
-            store_owner: shopData[0].store_owner,
-            order_number: orderData.order_number
-          })
+          const orderArray = [orderData];
+          const lineItemsOrders = orderArray.map(itm => itm.line_items.map((itms) => (itms.vendor.indexOf("RIBBON_REELS_CARD") > -1 ? itms.vendor : 0)).indexOf("RIBBON_REELS_CARD") > -1 ? itm : []);
+          const rows = lineItemsOrders.map(element => {
+            if (!Array.isArray(element)) {
+              return element;
+            }
+          });
+          const rowsArray = rows.filter(item => item !== undefined);
+          const newArr = rowsArray.map(v => ({
+            ...v, store_owner: shopData[0].shop_owner,
+            reel_revenue: v.line_items[0].price
+          }));
+          console.log("newarr---->",orderData.customer.email, orderData.id, orderData.customer.first_name + ' ' + orderData.customer.last_name)
+          axios.post('http://localhost:8080/api/orders/create', newArr)
             .then(function (response) {
-              console.log('order in---->', response.data);
+              // console.log('order in---->', orderData, response);
+              axios.post('http://localhost:8080/api/orders/mail', {
+                mail_to: orderData.customer.email,
+                order_id: orderData.id,
+                sender_name: orderData.customer.first_name + ' ' + orderData.customer.last_name
+              })
+                .then(function (response) {
+                  // console.log('mail---->', orderData, response.data);
+                })
+                .catch(function (error) {
+                  // console.log(error);
+                });
             })
             .catch(function (error) {
-              console.log(error);
+              // console.log(error);
             });
         }
       }
@@ -213,12 +233,12 @@ export async function createServer(
   });
 
   app.post("/api/webhooks/fulfillment_events_create", async (req, res) => {
-    console.log('new--->', session);
+    // console.log('new--->', session);
     axios.post('http://localhost:8080/api/file/findFile', {
       order_id: req.header('x-shopify-order-id')
     })
       .then(async function (response) {
-        console.log('fulfillment in---->', response.data);
+        // console.log('fulfillment in---->', response.data);
         if (response.data.length > 0) {
           try {
             const { Order, Fulfillment, FulfillmentEvent } = await import(
@@ -259,7 +279,7 @@ export async function createServer(
                     order_id: fulfillmentData.order_id,
                     fulfillment_id: fulfillmentData.id,
                   });
-                  console.log("fulfillmentArray--->", fulfillmentEventData);
+                  // console.log("fulfillmentArray--->", fulfillmentEventData);
                   if (fulfillmentEventData) {
                     const fulfillmentParticularEventData = fulfillmentEventData.map(async (item) => {
                       return await FulfillmentEvent.find({
@@ -274,14 +294,14 @@ export async function createServer(
                         const shopData = await Shop.all({ session: session[0] });
                         axios.post('http://localhost:8080/api/orders/mail', {
                           mail_to: orderData.customer.email,
-                          store_owner: shopData[0].store_owner,
-                          order_number: orderData.order_number
+                          order_id: orderData.id,
+                          sender_name: orderData.customer.first_name + ' ' + orderData.customer.last_name
                         })
                           .then(async function (response) {
-                            console.log('fulfillment in---->', response.data);
+                            // console.log('fulfillment in---->', response.data);
                           })
                           .catch(function (error) {
-                            console.log(error);
+                            // console.log(error);
                           });
                       }
                       var estimatedDate = new Date(moment(fulfillmentParticularEventData.fulfillment_event.estimated_delivery_at).format('MM/DD/YYYY'));
@@ -290,14 +310,14 @@ export async function createServer(
                         const shopData = await Shop.all({ session: session[0] });
                         axios.post('http://localhost:8080/api/orders/mail', {
                           mail_to: orderData.customer.email,
-                          store_owner: shopData[0].store_owner,
-                          order_number: orderData.order_number
+                          order_id: orderData.id,
+                          sender_name: orderData.customer.first_name + ' ' + orderData.customer.last_name
                         })
                           .then(async function (response) {
-                            console.log('fulfillment in---->', response.data);
+                            // console.log('fulfillment in---->', response.data);
                           })
                           .catch(function (error) {
-                            console.log(error);
+                            // console.log(error);
                           });
                       });
                     }
@@ -306,7 +326,7 @@ export async function createServer(
               });
             });
           } catch (e) {
-            console.log(`Failed to process webhook: ${e.message}`);
+            // console.log(`Failed to process webhook: ${e.message}`);
             if (!res.headersSent) {
               res.status(500).send(e.message);
             }
@@ -314,7 +334,7 @@ export async function createServer(
         }
       })
       .catch(function (error) {
-        console.log(error);
+        // console.log(error);
       });
   });
 
@@ -366,7 +386,7 @@ export async function createServer(
     try {
       await productCreator(session);
     } catch (e) {
-      console.log(`Failed to process products/create: ${e.message}`);
+      // console.log(`Failed to process products/create: ${e.message}`);
       status = 500;
       error = e.message;
     }
