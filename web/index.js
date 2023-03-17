@@ -203,14 +203,15 @@ export async function createServer(
             ...v, store_owner: shopData[0].shop_owner,
             reel_revenue: v.line_items[0].price
           }));
-          console.log("newarr---->",orderData.customer.email, orderData.id, orderData.customer.first_name + ' ' + orderData.customer.last_name)
+          console.log("newarr---->", orderData.customer.email, orderData.id, orderData.customer.first_name + ' ' + orderData.customer.last_name)
           axios.post('http://localhost:8080/api/orders/create', newArr)
             .then(function (response) {
               // console.log('order in---->', orderData, response);
-              axios.post('http://localhost:8080/api/orders/mail', {
+              axios.post('http://localhost:8080/api/orders/mailAndMessage', {
                 mail_to: orderData.customer.email,
                 order_id: orderData.id,
-                sender_name: orderData.customer.first_name + ' ' + orderData.customer.last_name
+                sender_name: orderData.customer.first_name + ' ' + orderData.customer.last_name,
+                sender_phone: orderData.customer.phone
               })
                 .then(function (response) {
                   // console.log('mail---->', orderData, response.data);
@@ -234,12 +235,11 @@ export async function createServer(
 
   app.post("/api/webhooks/fulfillment_events_create", async (req, res) => {
     // console.log('new--->', session);
-    axios.post('http://localhost:8080/api/file/findFile', {
-      order_id: req.header('x-shopify-order-id')
-    })
+    const order_id = req.header('x-shopify-order-id')
+    axios.get(`http://localhost:8080/api/file/findFile/${order_id}/gifter`)
       .then(async function (response) {
         // console.log('fulfillment in---->', response.data);
-        if (response.data.length > 0) {
+        if (response) {
           try {
             const { Order, Fulfillment, FulfillmentEvent } = await import(
               `@shopify/shopify-api/dist/rest-resources/${Shopify.Context.API_VERSION}/index.js`
@@ -292,10 +292,11 @@ export async function createServer(
                     if (fulfillmentParticularEventData) {
                       if (fulfillmentParticularEventData.fulfillment_event.status === "out_for_delivery") {
                         const shopData = await Shop.all({ session: session[0] });
-                        axios.post('http://localhost:8080/api/orders/mail', {
+                        axios.post('http://localhost:8080/api/orders/mailAndMessage', {
                           mail_to: orderData.customer.email,
                           order_id: orderData.id,
-                          sender_name: orderData.customer.first_name + ' ' + orderData.customer.last_name
+                          sender_name: orderData.customer.first_name + ' ' + orderData.customer.last_name,
+                          sender_phone: orderData.customer.phone
                         })
                           .then(async function (response) {
                             // console.log('fulfillment in---->', response.data);
@@ -308,10 +309,11 @@ export async function createServer(
                       var estimatedDays = Math.round(((estimatedDate.getTime()) / (1000 * 3600 * 60 * 60 * 24))).toFixed(0);
                       cron.schedule(`0 0 ${estimatedDays} * *`, async () => {
                         const shopData = await Shop.all({ session: session[0] });
-                        axios.post('http://localhost:8080/api/orders/mail', {
+                        axios.post('http://localhost:8080/api/orders/mailAndMessage', {
                           mail_to: orderData.customer.email,
                           order_id: orderData.id,
-                          sender_name: orderData.customer.first_name + ' ' + orderData.customer.last_name
+                          sender_name: orderData.customer.first_name + ' ' + orderData.customer.last_name,
+                          sender_phone: orderData.customer.phone
                         })
                           .then(async function (response) {
                             // console.log('fulfillment in---->', response.data);

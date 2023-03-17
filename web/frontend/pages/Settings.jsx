@@ -64,7 +64,6 @@ export default function Settings() {
                 order_notifications: state.settingsPage.order_notifications,
                 update_notifications: state.settingsPage.update_notifications
             };
-            console.log('cbhd---->', data);
             const result = await OnboardingUpdateParticularService(state.settingsPage.store_name, data);
             if (result) {
                 handleSettingsOnboarding();

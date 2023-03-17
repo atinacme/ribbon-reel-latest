@@ -43,7 +43,6 @@ export default function ReelOrders() {
                     });
                     const rowsArray = rows.filter(item => item !== undefined);
                     setCustomers(rowsArray);
-                    console.log("status---->", rowsArray)
                     const newArr = rowsArray.map(v => ({
                         ...v, store_owner: shop,
                         reel_revenue: v.line_items[0].price
