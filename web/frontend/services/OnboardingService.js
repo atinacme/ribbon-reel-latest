@@ -1,6 +1,6 @@
 import HttpRequest from "./HttpRequest";
 
-const baseUrl = 'http://localhost:8080/api';
+const baseUrl = process.env.NODE_ENV === 'production' ? 'https://ribbon-reel-backend.herokuapp.com/api' : 'http://localhost:8080/api';
 
 const OnboardingCreateService = async (data) => {
     return await HttpRequest("POST", `${baseUrl}/onboardings`, data);

@@ -23,6 +23,8 @@ const PORT = parseInt(process.env.BACKEND_PORT || process.env.PORT, 10);
 const DEV_INDEX_PATH = `${process.cwd()}/frontend/`;
 const PROD_INDEX_PATH = `${process.cwd()}/frontend/dist/`;
 
+const baseUrl = process.env.NODE_ENV === 'production' ? 'https://ribbon-reel-backend.herokuapp.com/api' : 'http://localhost:8080/api';
+console.log("dstt--->", baseUrl)
 // const DB_PATH = `${process.cwd()}/database.sqlite`;
 const DB_PATH = `postgresql://postgres:12345@localhost:5432/postgres`;
 
@@ -204,10 +206,10 @@ export async function createServer(
             reel_revenue: v.line_items[0].price
           }));
           console.log("newarr---->", orderData.customer.email, orderData.id, orderData.customer.first_name + ' ' + orderData.customer.last_name)
-          axios.post('http://localhost:8080/api/orders/create', newArr)
+          axios.post(`${baseUrl}/orders/create`, newArr)
             .then(function (response) {
               // console.log('order in---->', orderData, response);
-              axios.post('http://localhost:8080/api/orders/mailAndMessage', {
+              axios.post(`${baseUrl}/orders/mailAndMessage`, {
                 mail_to: orderData.customer.email,
                 order_id: orderData.id,
                 sender_name: orderData.customer.first_name + ' ' + orderData.customer.last_name,
@@ -236,7 +238,7 @@ export async function createServer(
   app.post("/api/webhooks/fulfillment_events_create", async (req, res) => {
     // console.log('new--->', session);
     const order_id = req.header('x-shopify-order-id')
-    axios.get(`http://localhost:8080/api/file/findFile/${order_id}/gifter`)
+    axios.get(`${baseUrl}/file/findFile/${order_id}/gifter`)
       .then(async function (response) {
         // console.log('fulfillment in---->', response.data);
         if (response) {
@@ -292,7 +294,7 @@ export async function createServer(
                     if (fulfillmentParticularEventData) {
                       if (fulfillmentParticularEventData.fulfillment_event.status === "out_for_delivery") {
                         const shopData = await Shop.all({ session: session[0] });
-                        axios.post('http://localhost:8080/api/orders/mailAndMessage', {
+                        axios.post(`${baseUrl}/orders/mailAndMessage`, {
                           mail_to: orderData.customer.email,
                           order_id: orderData.id,
                           sender_name: orderData.customer.first_name + ' ' + orderData.customer.last_name,
@@ -309,7 +311,7 @@ export async function createServer(
                       var estimatedDays = Math.round(((estimatedDate.getTime()) / (1000 * 3600 * 60 * 60 * 24))).toFixed(0);
                       cron.schedule(`0 0 ${estimatedDays} * *`, async () => {
                         const shopData = await Shop.all({ session: session[0] });
-                        axios.post('http://localhost:8080/api/orders/mailAndMessage', {
+                        axios.post(`${baseUrl}/orders/mailAndMessage`, {
                           mail_to: orderData.customer.email,
                           order_id: orderData.id,
                           sender_name: orderData.customer.first_name + ' ' + orderData.customer.last_name,

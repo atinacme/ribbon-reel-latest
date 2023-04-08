@@ -35,7 +35,7 @@ export default function Overview() {
                     var customer = [];
                     result.forEach(element => {
                         sum += parseInt(element.reel_revenue);
-                        customer.push(element.customer);
+                        customer.push(element.sender_email);
                         let findDuplicates = arr => arr.filter((item, index) => arr.indexOf(item) != index);
                         cust = [...new Set(findDuplicates(customer))].length;
                     });
