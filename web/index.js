@@ -26,7 +26,7 @@ const PROD_INDEX_PATH = `${process.cwd()}/frontend/dist/`;
 const baseUrl = process.env.NODE_ENV === 'production' ? 'https://ribbon-reel-backend.herokuapp.com/api' : 'http://localhost:8080/api';
 console.log("dstt--->", baseUrl)
 // const DB_PATH = `${process.cwd()}/database.sqlite`;
-const DB_PATH = `postgresql://postgres:12345@localhost:5432/postgres`;
+const DB_PATH = process.env.NODE_ENV === 'production' ? `postgresql://postgres:12345@https://ribbon-reel-backend.herokuapp.com:5432/postgres` : `postgresql://postgres:12345@localhost:5432/postgres`;
 
 Shopify.Context.initialize({
   API_KEY: process.env.SHOPIFY_API_KEY,
